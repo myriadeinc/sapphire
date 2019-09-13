@@ -1,0 +1,49 @@
+{
+  "name": "sapphire",
+  "version": "1.0.0",
+  "description": "Bridge for diamond and emerald",
+  "main": "src/main.js",
+  "repository": "https://github.com/myriadeinc/sapphire.git",
+  "author": "Myriade Inc.",
+  "scripts": {
+    "start:dev": "nodemon --inspect=0.0.0.0:9873 -L --ignore test src/main.js",
+    "start": "node src/main.js",
+    "test": "mocha --color --recursive 'test'",
+    "lint": "eslint --fix src",
+    "migration:up": "node scripts/migration.up.js",
+    "migration:generate": "node scripts/generate.migration.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@sendgrid/mail": "^6.4.0",
+    "app-module-path": "^2.2.0",
+    "bcrypt": "^3.0.6",
+    "big-integer": "^1.6.44",
+    "body-parser": "^1.19.0",
+    "bunyan": "^1.8.12",
+    "bunyan-formatter": "^1.0.0",
+    "egads": "^1.0.2",
+    "express": "^4.17.1",
+    "express-validator": "^6.2.0",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.15",
+    "nconf": "^0.10.0",
+    "node-rsa": "^1.0.5",
+    "path": "^0.12.7",
+    "pg": "^7.11.0",
+    "promise-redis": "0.0.5",
+    "redis": "^2.8.0",
+    "sequelize": "^5.10.1",
+    "umzug": "^2.2.0",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "chai-string": "^1.5.0",
+    "eslint": "^6.0.1",
+    "eslint-config-google": "^0.13.0",
+    "mocha": "^6.2.0",
+    "nodemon": "^1.19.1"
+  }
+}
