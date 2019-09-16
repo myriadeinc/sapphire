@@ -3,7 +3,6 @@
 const router = require('express').Router();
 /* eslint-enable */
 
-router.use('/account', require('src/routes/account.router.js'));
-router.use('/email', require('src/routes/email.router.js'));
+router.use('/report', require('src/routes/report.router.js', ));
 
 module.exports = router;

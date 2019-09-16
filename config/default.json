@@ -11,15 +11,6 @@
         "user": "",
         "db": "0"
     },
-    "jwt": {
-        "public_key": "__REPLACE__",
-        "private_key": "__REPLACE__",
-        "algorithm": "RS512",
-        "expiry": {
-            "refresh_token": 5184000,
-            "access_token": 5184000
-        }
-    },
     "mail": {
         "enable": false,
         "sendgrid_key": "__REPLACE__"

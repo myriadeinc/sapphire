@@ -3,6 +3,7 @@
 const express = require('express');
 const routes = require('src/routes');
 const bodyParser = require('body-parser');
+const {check, validationResult} = require('express-validator');
 
 const app = express();
 

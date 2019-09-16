@@ -7,7 +7,10 @@ Emerald -> Sapphire -> Diamond
 {
     "uuid": "uuid-here",
     "hashrate": 123123,
-    
+    "numShares": 123213
 
 }
 ```
+
+
+

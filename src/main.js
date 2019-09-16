@@ -11,10 +11,6 @@ let server;
 
 const start = async () => {
   logger.core.info('Starting sapphire');
-  
-
-
-
   const port = config.get('port');
   const app = require('./app');
   server = app.listen(port, () => {
@@ -25,11 +21,6 @@ const start = async () => {
 const gracefulShutdown = () => {
   server.close(async () => {
     logger.core.info('Gracefully closing the app');
-    cache.close();
-    
-    } finally {
-      process.exit(0);
-    }
   });
 };
 
