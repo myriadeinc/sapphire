@@ -17,22 +17,5 @@ services:
       - "8081:8081"
       - "9873:9873"
     depends_on:
-#      #db:
-#        condition: service_healthy
-#  db:
-#    image: postgres:9.6
-#    environment:
-#      - POSTGRES_PASSWORD=postgres
-#      - POSTGRES_USER=postgres
-#      - POSTGRES_DB=bucky
-#    ports:
-#      - "5432:5432"
-#    volumes:
-#      - db_data:/var/lib/postgres/data
-#    healthcheck:
-#      test: "pg_isready -h localhost -p 5432 -q -U postgres"
-#      interval: 1s
-#      timeout: 1s
-#      retries: 100
-#volumes:
-#  db_data:
+      db:
+        condition: service_healthy
