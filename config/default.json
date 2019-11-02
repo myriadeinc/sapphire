@@ -11,6 +11,24 @@
         "user": "",
         "db": "0"
     },
+    "db": {
+        "host": "localhost",
+        "port": 5432,
+        "database": "myriade",
+        "schema": "Diamond",
+        "username": "postgres",
+        "password": "postgres",
+        "model_path": "src/models/",
+        "migrations": {
+            "path": "migrations/",
+            "model_name": "Migrations",
+            "pattern": "^.+\\.js$"
+        }
+    },
+    "rabbitmq":{
+        "url" : "amqp://guest:guest@1277.0.0.1:5672",
+        "queue": "Miner::Metrics"
+    },
     "mail": {
         "enable": false,
         "sendgrid_key": "__REPLACE__"

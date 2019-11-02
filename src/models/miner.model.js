@@ -20,44 +20,45 @@ const MinerModel = DB.sequelize.define('Miners', {
   hashrate: {
     type: DB.Sequelize.BIGINT,
     allowNull: false,
-    defaultValue: {},
+    defaultValue: 0,
   },
 
-  balance: {
+  monero_balance: {
     type: DB.Sequelize.BIGINT,
     allowNull: false,
+    defaultValue: 0,
   },
+
+  myriade_coint_balance: {
+    type: DB.Sequelize.BIGINT,
+    defaultValue: 0,
+    allowNull: false,
+  }
 
 });
 
-MinerModel.validFields = ['email', 'name',
-  'firstName', 'lastName', 'phoneNumber',
-  'gender', 'birthday', 'credential', 'wallet_address',
-];
+MinerModel.validFields = ['hashrate', 'monero_balance', 'myriade_coint_balance'];
 
-AccountModel.prototype.toJSON = function(unsafe = false) {
+MinerModel.prototype.toJSON = function(unsafe = false) {
   if (unsafe === true) {
     return _.clone(this.get({plain: true}));
   }
 
   const self = this;
-  const json = [
-    'name', 'firstName', 'lastName',
-    'wallet_address',
-  ]
-      .map((key) => {
-        return [key, self.get(key)];
-      })
-      .filter(([field, value]) => {
-        return !!value;
-      })
-      .reduce((acc, [key, value]) => {
-        return {...acc, [key]: value};
-      }, {});
+  MinerModel.validFields
+    .map((key) => {
+      return [key, self.get(key)];
+    })
+    .filter(([field, value]) => {
+      return !!value;
+    })
+    .reduce((acc, [key, value]) => {
+      return {...acc, [key]: value};
+    }, {});
 
   json.id = this.get('externalId');
 
   return json;
 };
 
-module.exports = AccountModel;
+module.exports = MinerModel;
