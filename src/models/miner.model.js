@@ -3,24 +3,16 @@
 const _ = require('lodash');
 const DB = require('src/util/db.js');
 
-const MinerModel = DB.sequelize.define('Miners', {
-  id: {
-    type: DB.Sequelize.BIGINT,
-    primaryKey: true,
-    autoIncrement: true,
-  },
+const HashRateModel = require('src/models/hashrate.model.js');
 
-  externalId: {
+const MinerModel = DB.sequelize.define('Miners', {
+
+  id: {
     type: DB.Sequelize.UUID,
     defaultValue: DB.Sequelize.UUIDV4,
+    primaryKey: true,
     allowNull: false,
     unique: true,
-  },
-
-  hashrate: {
-    type: DB.Sequelize.BIGINT,
-    allowNull: false,
-    defaultValue: 0,
   },
 
   monero_balance: {
@@ -37,28 +29,8 @@ const MinerModel = DB.sequelize.define('Miners', {
 
 });
 
-MinerModel.validFields = ['hashrate', 'monero_balance', 'myriade_coint_balance'];
+MinerModel.hasMany(HashRateModel);
 
-MinerModel.prototype.toJSON = function(unsafe = false) {
-  if (unsafe === true) {
-    return _.clone(this.get({plain: true}));
-  }
-
-  const self = this;
-  MinerModel.validFields
-    .map((key) => {
-      return [key, self.get(key)];
-    })
-    .filter(([field, value]) => {
-      return !!value;
-    })
-    .reduce((acc, [key, value]) => {
-      return {...acc, [key]: value};
-    }, {});
-
-  json.id = this.get('externalId');
-
-  return json;
-};
+MinerModel.validFields = ['monero_balance', 'myriade_coint_balance'];
 
 module.exports = MinerModel;
