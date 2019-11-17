@@ -24,7 +24,6 @@ app.enable('trust proxy');
 app.disable('x-powered-by');
 app.use(bodyParser.json());
 
-
 app.use('/v1', routes);
 
 app.get('/healthcheck', (req, res, next) => {

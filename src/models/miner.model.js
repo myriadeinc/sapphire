@@ -21,7 +21,7 @@ const MinerModel = DB.sequelize.define('Miners', {
     defaultValue: 0,
   },
 
-  myriade_coint_balance: {
+  myriade_credits: {
     type: DB.Sequelize.BIGINT,
     defaultValue: 0,
     allowNull: false,
@@ -29,8 +29,8 @@ const MinerModel = DB.sequelize.define('Miners', {
 
 });
 
-MinerModel.hasMany(HashRateModel);
-
-MinerModel.validFields = ['monero_balance', 'myriade_coint_balance'];
+MinerModel.hasMany(
+  HashRateModel, { foreignKey: 'minerId', targetKey: 'id' }
+);
 
 module.exports = MinerModel;

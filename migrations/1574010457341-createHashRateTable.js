@@ -9,33 +9,36 @@ const Migration = {
     
     down: (queryInterface, schema, Sequelize) => {
         return queryInterface.sequelize.transaction(async (transaction) => {
-            await queryInterface.dropTable({ tableName: 'Miners', schema });
+            await queryInterface.dropTable({ tableName: 'Hashrates', schema });
         });
     }
 };
 
 const createMinerTable = (queryInstance, schema, Sequelize) => {
     return queryInstance.createTable(
-        'Miners',
+        'Hashrates',
         {
             id: {
-                type: Sequelize.UUID,
+                type: Sequelize.BIGINT,
                 unique: true,
                 primaryKey: true,
+                autoIncrement: false
+            },
+            minerId: {
+                type: Sequelize.UUID,
+                references: {
+                    model: 'Miners',
+                    key: 'id'
+                }
+            },
+            time: {
+                type: Sequelize.DATE,
                 allowNull: false
             },
-            balance: {
-                type: Sequelize.BIGINT,
-                allowNull: false
-            },
-            monero_balance: {
+            rate: {
                 type: Sequelize.BIGINT,
                 allowNull: false
             },    
-            myriade_coin_balance: {
-                type: Sequelize.BIGINT,
-                allowNull: false,
-            },
             createdAt: { type: Sequelize.DATE },
             updatedAt: { type: Sequelize.DATE },
             deletedAt: { type: Sequelize.DATE }
