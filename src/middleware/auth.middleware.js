@@ -50,7 +50,7 @@ const AuthMiddleware = {
 
     return decodeAndVerify(tokenString)
       .then((token) => {
-        req.minerId = token.sub;
+        req.body.variables.minerId = token.sub;
         req.token = token;
         next();
       })

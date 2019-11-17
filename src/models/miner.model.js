@@ -9,7 +9,6 @@ const MinerModel = DB.sequelize.define('Miners', {
 
   id: {
     type: DB.Sequelize.UUID,
-    defaultValue: DB.Sequelize.UUIDV4,
     primaryKey: true,
     allowNull: false,
     unique: true,

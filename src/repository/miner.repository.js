@@ -4,7 +4,11 @@ const MinerModel = require('src/models/miner.model.js');
 
 const MinerRepository = {
   getMinerDataById: (id) => {
-    return MinerModel.findById(id);
+    console.log(id)
+    return MinerModel.findByPk(id)
+    .then(data => {
+      return data;
+    })
   }
 }
 

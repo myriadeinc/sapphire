@@ -10,8 +10,6 @@ const { ApolloServer } = require('apollo-server-express');
 
 const graphQLServer = new ApolloServer(MinerSchema);
 
-
-
 router.use('/', AuthMiddleware.validateMinerId)
 
 graphQLServer.applyMiddleware({ app: router, path: '/' });

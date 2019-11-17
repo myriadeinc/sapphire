@@ -16,7 +16,7 @@ const MinerSchema = {
     }
 
     type Query {
-      minerData: MinerData
+      minerData(id: ID!): MinerData
     }
   `), 
   context: {
@@ -30,7 +30,7 @@ const MinerSchema = {
     },
     Query: {
       minerData: (parent, args, context, info) => {
-        context.repository.getMinerDataById(args.minerId);
+        context.repository.getMinerDataById(args.id);
       }
     }
   }

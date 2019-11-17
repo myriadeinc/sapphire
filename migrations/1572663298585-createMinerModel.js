@@ -24,16 +24,14 @@ const createMinerTable = (queryInstance, schema, Sequelize) => {
                 primaryKey: true,
                 allowNull: false
             },
-            balance: {
-                type: Sequelize.BIGINT,
-                allowNull: false
-            },
             monero_balance: {
                 type: Sequelize.BIGINT,
-                allowNull: false
+                allowNull: false,
+                defaultValue: 0,
             },    
-            myriade_coin_balance: {
+            myriade_credits: {
                 type: Sequelize.BIGINT,
+                defaultValue: 0,
                 allowNull: false,
             },
             createdAt: { type: Sequelize.DATE },
