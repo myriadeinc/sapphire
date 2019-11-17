@@ -1,7 +1,7 @@
 'use strict';
 
 const MinerModel = require('src/models/miner.model.js');
-const HashrateModel = require('src/models/hashrate.model.js');
+const HashRateModel = require('src/models/hashrate.model.js');
 
 const logger = require('src/util/logger.js').db;
 
@@ -18,7 +18,7 @@ const MinerRepository = {
     if(!page || page <= 0){
       page = 1
     }
-    return HashrateModel.findAll({
+    return HashRateModel.findAll({
       where: {
         minerId: id
       },
@@ -29,7 +29,39 @@ const MinerRepository = {
       limit : 50,
       subQuery:false
     })
-  }
+  },
+
+  updateHashrate: ({minerId, hashrate, time}) => {
+    return HashRateModel.create({
+      minerId,
+      rate: hashrate,
+      time
+    })
+  },
+
+  getMiner: (minerId) => {
+    return MinerModel.findOrCreate({
+      where: {
+        id: minerId
+      },
+      defaults: {
+        monero_balance: 0,
+        myriade_credits: 0
+      }
+    })
+    .then(([miner, created]) => {
+      return miner;
+    })
+  },
+
+  updateMiner: ({minerId, data}) => {
+    return MinerModel.update({
+      data,
+      where: {
+        id: minerId
+      }
+    });
+  } 
 }
 
 module.exports = MinerRepository

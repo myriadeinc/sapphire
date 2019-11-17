@@ -55,7 +55,7 @@ const MQ = {
                 if (null !== msg){
                     MQ.channel.ack(msg);
                     logger.info(`Consuming message: ${msg.content.toString()}\n from queue ${queue}`);
-                    cb(JSON.parse(msg.content.toString()));
+                    return cb(JSON.parse(msg.content.toString()));
                 }
             });
         })

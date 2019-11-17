@@ -21,12 +21,15 @@ const main = async () => {
   await db.init(config.get('db'),logger.db);
   logger.core.info('Database initialized.');
 
-  
   const port = config.get('port');
   const app = require('./app');
 
-  server = app.listen(port, () => {
+  server = app.listen(port, async () => {
     logger.core.info(`Service started on port ${port}`);
+
+    logger.core.info('Registrating MinerMetrics service listener');
+    await require('src/service/miner.metrics.service.js').init();
+    logger.core.info('MinerMetrics service listener registered');
   });
 };
 
