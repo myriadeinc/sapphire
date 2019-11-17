@@ -12,7 +12,7 @@ const MinerSchema = {
       id: ID!,
       monero_balance: Int,
       myriade_credits: Int,
-      hashrates: [Hashrate]
+      hashrates(page: Int): [Hashrate]
     }
 
     type Query {
@@ -25,7 +25,7 @@ const MinerSchema = {
   resolvers: {
     MinerData: {
       hashrates: (parent, args, context, info) => {
-        return parent.getHashrates();
+        return context.repository.getMinerHashrates(parent.id, args.page)
       }
     },
     Query: {
