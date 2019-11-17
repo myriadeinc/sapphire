@@ -14,7 +14,10 @@ const MinerRepository = {
     })
   },
 
-  getMinerHashrates: (id, page=1) => {
+  getMinerHashrates: (id, page) => {
+    if(!page || page <= 0){
+      page = 1
+    }
     return HashrateModel.findAll({
       where: {
         minerId: id
