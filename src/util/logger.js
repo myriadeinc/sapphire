@@ -14,5 +14,5 @@ module.exports = {
   core: logger.child({component: 'core'}),
   account: logger.child({component: 'account'}),
   db: logger.child({component: 'db'}),
-  mq: logger.child({component: 'mq'}),
+  mq: logger.child({component: 'mq'})
 };

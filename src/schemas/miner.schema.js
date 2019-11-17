@@ -25,12 +25,12 @@ const MinerSchema = {
   resolvers: {
     MinerData: {
       hashrates: (parent, args, context, info) => {
-        parent.getHashrates();
+        return parent.getHashrates();
       }
     },
     Query: {
       minerData: (parent, args, context, info) => {
-        context.repository.getMinerDataById(args.id);
+        return context.repository.getMinerDataById(args.id);
       }
     }
   }
