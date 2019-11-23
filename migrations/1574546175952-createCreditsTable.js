@@ -3,20 +3,20 @@
 const Migration = {
 
     up: (queryInterface, schema, Sequelize) => {
-        return createHashrateTable(queryInterface, schema, Sequelize);
+        return createCreditsTable(queryInterface, schema, Sequelize);
 
     },
     
     down: (queryInterface, schema, Sequelize) => {
         return queryInterface.sequelize.transaction(async (transaction) => {
-            await queryInterface.dropTable({ tableName: 'Hashrates', schema });
+            await queryInterface.dropTable({ tableName: 'Credits', schema });
         });
     }
 };
 
-const createHashrateTable = (queryInstance, schema, Sequelize) => {
+const createCreditsTable = (queryInstance, schema, Sequelize) => {
     return queryInstance.createTable(
-        'Hashrates',
+        'Credits',
         {
             id: {
                 type: Sequelize.BIGINT,
@@ -35,7 +35,7 @@ const createHashrateTable = (queryInstance, schema, Sequelize) => {
                 type: Sequelize.DATE,
                 allowNull: false
             },
-            rate: {
+            credit: {
                 type: Sequelize.BIGINT,
                 allowNull: false
             },    
