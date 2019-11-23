@@ -2,33 +2,46 @@
 
 const MinerRepository = require('src/repository/miner.repository.js');
 
+const axios = require('axios');
+
 const mq = require('src/util/mq.js');
 
 const logger = require('src/util/logger.js').core;
 
-const BLOCK_REWARD = 0.3;
 
 const MinerMetricsService = {
+
+  getMoneroStats: () => {
+    return axios({
+      url: 'http://moneroblocks.info/api/get_stats/',
+      method: 'get'
+    })
+    .then(({data}) => {
+      return data;
+    })
+  },
 
   convertShareToHashrate: (shares, difficulty, timestamp, minerId) => {
     return 100;
   },
 
-  computeAward: (hashrate, network_hashrate) => {
-    return (hashrate / network_hashrate) * 0.9 * (10**7) * BLOCK_REWARD;s
+  computeAward: (miner_hashrate, network_hashrate, block_reward) => {
+    return (miner_hashrate / network_hashrate) * 0.9 * (10**7) * block_reward;
   },
 
   processData: async (data) => {
     try{
       let miner = await MinerRepository.getMiner(data.minerId);
-      let hashrate = MinerMetricsService.convertShareToHashrate(data.shares, data.difficulty, data.timestamp, data.minerId);
-      let network_hashrate = 100; // Change this
+      let miner_hashrate = MinerMetricsService.convertShareToHashrate(data.shares, data.difficulty, data.timestamp, data.minerId);
+      const monero_stats = MinerMetricsService.getMoneroStats();
+      const network_hashrate = monero_stats.hashrate;
+      const block_reward = monero_stats.last_reward;
       await MinerRepository.updateHashrate({
         minerId: miner.id,
         rate: hashrate,
         time: data.timestamp
       })
-      new_myriade_credits = MinerMetricsService.computeAward(hashrate, network_hashrate);
+      new_myriade_credits = MinerMetricsService.computeAward(miner_hashrate, network_hashrate, block_reward);
       if (new_myriade_credits > 0){
         await MinerRepository.updateMiner({
           minerId: miner.id,
