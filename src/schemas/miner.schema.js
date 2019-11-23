@@ -8,11 +8,17 @@ const MinerSchema = {
       time: String!,
       rate: Int!
     }
+
+    type MyriadeCredit {
+      time: String!,
+      credit: Int!
+    }
+
     type MinerData {
       id: ID!,
       monero_balance: Int,
-      myriade_credits: Int,
-      hashrates(page: Int): [Hashrate]
+      myriade_credits(page: Int): [MyriadeCredit],
+      hashrates(page: Int): [Hashrate],
     }
 
     type Query {
@@ -25,7 +31,10 @@ const MinerSchema = {
   resolvers: {
     MinerData: {
       hashrates: (parent, args, context, info) => {
-        return context.repository.getMinerHashrates(parent.id, args.page)
+        return context.repository.getMinerHashrates(parent.id, args.page);
+      },
+      myriade_credits: (parent, args, context, info) => {
+        return context.repository.getMinerCredits(parent.id, args.page);
       }
     },
     Query: {
