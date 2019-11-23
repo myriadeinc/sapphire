@@ -1,0 +1,51 @@
+version: 2
+jobs:
+  build:
+    docker:
+      # Primary
+      - image: myriadeinc/node-ci:latest
+        environment:
+          db__host: 127.0.0.1
+          db__port: 5432
+          rabbitmq__url: amqp://guest:guest@127.0.0.1:5672/
+      # Dependencies
+      - image: postgres:9.6
+        environment:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: myriade
+      - image: redis:3.2.3
+        environment:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: myriade
+      - image: rabbitmq:3.6.4-management
+    steps:
+      - checkout
+       - run:
+          name: Waiting for Dependencies to be ready
+          command: |
+            for i in `seq 1 10`;
+            do
+              nc -z localhost 5432 && \
+                nc -z localhost 5672 && \
+                nc -z localhost 6379 && \
+                echo Success && exit 0
+              echo -n .
+              sleep 3
+            done
+            echo Failed waiting for Dependencies && exit 1
+      - run:
+          name: Run Tests
+          command: |
+            npm run test
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Build and push Docker image
+          command: |
+            TAG=$(git show -s --pretty=%H) make build
+      # - run:
+      #     name: Deploy app to Digital Ocean Server via Docker
+      #     command: |
+      #       ssh -o StrictHostKeyChecking=no root@hello.dpunks.org "/bin/bash ./deploy_app.sh ariv3ra/$IMAGE_NAME:$TAG"

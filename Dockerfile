@@ -1,23 +1,27 @@
-FROM node:8.9.4
+FROM ubuntu:18.04 as builder
 
-ARG NPM_TOKEN_ARG
+  RUN apt update && apt install -y nodejs npm 
 
-ENV NODE_ENV ""
-ENV NPM_TOKEN $NPM_TOKEN_ARG
+  RUN apt-get install -y libboost-all-dev
+  RUN apt-get update && apt-get install -y git
+  WORKDIR /usr/src/build
+  RUN chmod 777 /usr/src/build
 
-# Create app directory
-WORKDIR /usr/src/app
+  # Install && build app dependencies
+  COPY . . 
+  RUN rm -rf node_modules
+  RUN npm install
 
-RUN chown -R node:node /usr/src/app
-USER node
 
-# Install app dependencies
-COPY package.json package-lock.json ./
-COPY .npmrc .
-RUN npm install
+FROM node:8.9.4-slim as app
+  # Create app directory
+  WORKDIR /usr/src/app
 
-# Bundle app source
-COPY . .
+  RUN chown -R node:node /usr/src/app
+  USER node
 
-# We don't run "npm start" because we don't want npm to manage the SIGTERM signal
-CMD [ "node", "src/main.js" ]
+  # Bundle app source
+  COPY --from=builder /usr/src/build/ /usr/src/app/
+
+  # We don't run "npm start" because we don't want npm to manage the SIGTERM signal
+  CMD [ "node", "src/main.js" ]

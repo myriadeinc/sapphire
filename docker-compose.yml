@@ -1,21 +1,35 @@
 version: '2.1'
 services:
-  diamond:
+  sapphire:
     extends:
       file: config.yml
       service: sapphire
     build:
-        context: ./
-        dockerfile: Dockerfile.dev
-    image: myriade/sapphire:dev
-    command: ["bash", "-c", "npm run migration:up && npm run start:dev"]
-    environment:
-      - NODE_ENV=local
+      context: ${SAPPHIRE_DIR}
+      dockerfile: Dockerfile.dev
+    image: myriadeinc/sapphire:dev
+    command: ["bash", "-c", "npm install && npm run migration:up && npm run start:dev"]
     volumes:
-      - ./:/usr/src/app
+      - ${SAPPHIRE_DIR}:/usr/src/app
+      - /usr/src/app/node_modules
     ports:
       - "8081:8081"
-      - "9873:9873"
+      - "9870:9870"
     depends_on:
       db:
-        condition: service_healthy
+          condition: service_healthy
+  db:
+    image: postgres:9.6
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=myriade
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgres/data
+    healthcheck:
+      test: "pg_isready -h localhost -p 5432 -q -U postgres"
+      interval: 1s
+      timeout: 1s
+      retries: 100
