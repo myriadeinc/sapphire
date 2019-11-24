@@ -22,6 +22,7 @@ jobs:
       - image: rabbitmq:3.6.4-management
     steps:
       - checkout
+      - setup_remote_docker
       - run:
           name: Waiting for db to be ready
           command: |
@@ -50,9 +51,9 @@ jobs:
           name: Run Tests
           command: |
             npm run test
-      # - setup_remote_docker:
-      #     docker_layer_caching: true
-      # - run:
-      #     name: Build and push Docker image
-      #     command: |
-      #       TAG=$(git show -s --pretty=%H) make build
+      - deploy:
+          name: Build and push Docker image
+          command: |
+            if [ "$ {CIRCLE_BRANCH}" == "master" ]; then
+              TAG=$(git show -s --pretty=%H) make build
+            fi

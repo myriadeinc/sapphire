@@ -24,7 +24,7 @@ const MyriadeCreditModel = DB.sequelize.define('Credits', {
 
   credit: {
     type: DB.Sequelize.BIGINT,
-    allowNull: false
+    allowNull: false,
   },
 
 }, {

@@ -17,19 +17,19 @@ const MinerModel = DB.sequelize.define('Miners', {
 
   monero_balance: {
     type: DB.Sequelize.BIGINT,
-    allowNull: false
-  }
+    allowNull: false,
+  },
 
 }, {
-  paranoid: true
+  paranoid: true,
 });
 
 MinerModel.hasMany(
-  HashRateModel, { foreignKey: 'minerId', targetKey: 'id' }
+    HashRateModel, {foreignKey: 'minerId', targetKey: 'id'},
 );
 
 MinerModel.hasMany(
-  MyriadeCreditModel, { foreignKey: 'minerId', targetKey: 'id' }
+    MyriadeCreditModel, {foreignKey: 'minerId', targetKey: 'id'},
 );
 
 module.exports = MinerModel;

@@ -24,7 +24,7 @@ const HashRateModel = DB.sequelize.define('Hashrates', {
 
   rate: {
     type: DB.Sequelize.BIGINT,
-    allowNull: false
+    allowNull: false,
   },
 
 }, {
