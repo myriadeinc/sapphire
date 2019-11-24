@@ -61,8 +61,8 @@ const MinerRepository = {
     return MyriadeCreditModel.create({
       minerId,
       credit,
-      time
-    })
+      time,
+    });
   },
 
   getMiner: (minerId) => {

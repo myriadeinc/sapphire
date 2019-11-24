@@ -68,18 +68,21 @@ const sampleCredits = [
 const clearAllMiners = () => {
     return MinerModel.destroy({
         truncate: true,
-        cascade: true
+        cascade: true,
+        force: true
     })
     .then(() => {
         return HashrateModel.destroy({
             truncate: true,
-            cascade: true
+            cascade: true,
+            force: true
         })
     })
     .then(() => {
         return CreditModel.destroy({
             truncate: true,
-            cascade: true
+            cascade: true,
+            force: true
         })
     });
 }
@@ -108,7 +111,17 @@ const addSampleCredits = (minerId) =>{
     }));
 }
 
-
+const getMinerCredits = async (minerId) => {
+    const available_credits = await CreditModel.findAll({
+        where: { minerId },
+        order: [['time', 'DESC']],
+        limit: 1
+    });
+    if (!available_credits || 0 == available_credits.length) {
+        return 0
+    }
+    return Number(available_credits[0].credit);
+}
 
 const MinerHelpers = {
     minerId_1,
@@ -119,6 +132,7 @@ const MinerHelpers = {
     addSampleHashrates,
     addSampleCredits,
     createSampleMiners,
+    getMinerCredits,
 }
 
 module.exports = MinerHelpers;
