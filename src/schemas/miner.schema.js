@@ -24,9 +24,9 @@ const MinerSchema = {
     type Query {
       minerData(id: ID!): MinerData
     }
-  `), 
+  `),
   context: {
-    repository: MinerRepository
+    repository: MinerRepository,
   },
   resolvers: {
     MinerData: {
@@ -35,14 +35,14 @@ const MinerSchema = {
       },
       myriade_credits: (parent, args, context, info) => {
         return context.repository.getMinerCredits(parent.id, args.page);
-      }
+      },
     },
     Query: {
       minerData: (parent, args, context, info) => {
         return context.repository.getMinerDataById(args.id);
-      }
-    }
-  }
-}
+      },
+    },
+  },
+};
 
 module.exports = MinerSchema;

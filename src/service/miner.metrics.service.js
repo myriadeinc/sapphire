@@ -14,11 +14,11 @@ const MinerMetricsService = {
   getMoneroStats: () => {
     return axios({
       url: 'http://moneroblocks.info/api/get_stats/',
-      method: 'get'
+      method: 'get',
     })
-    .then(({data}) => {
-      return data;
-    })
+        .then(({data}) => {
+          return data;
+        });
   },
 
   convertShareToHashrate: (shares, difficulty, timestamp, minerId) => {
@@ -30,35 +30,34 @@ const MinerMetricsService = {
   },
 
   processData: async (data) => {
-    try{
-      let miner = await MinerRepository.getMiner(data.minerId);
-      let miner_hashrate = MinerMetricsService.convertShareToHashrate(data.shares, data.difficulty, data.timestamp, data.minerId);
+    try {
+      const miner = await MinerRepository.getMiner(data.minerId);
+      const miner_hashrate = MinerMetricsService.convertShareToHashrate(data.shares, data.difficulty, data.timestamp, data.minerId);
       const monero_stats = MinerMetricsService.getMoneroStats();
       const network_hashrate = monero_stats.hashrate;
       const block_reward = monero_stats.last_reward;
       await MinerRepository.updateHashrate({
         minerId: miner.id,
         rate: hashrate,
-        time: data.timestamp
-      })
+        time: data.timestamp,
+      });
       new_myriade_credits = MinerMetricsService.computeAward(miner_hashrate, network_hashrate, block_reward);
-      if (new_myriade_credits > 0){
+      if (new_myriade_credits > 0) {
         await MinerRepository.updateMiner({
           minerId: miner.id,
           data: {
-            myriade_credits: miner.myriade_credits + new_myriade_credits
-          }
-        })
+            myriade_credits: miner.myriade_credits + new_myriade_credits,
+          },
+        });
       }
-    }
-    catch(err){
+    } catch (err) {
       logger.error(err);
     }
   },
 
   init: () => {
-    return mq.registerConsumer(MinerMetricsService.processData)
-  }
-}
+    return mq.registerConsumer(MinerMetricsService.processData);
+  },
+};
 
 module.exports = MinerMetricsService;

@@ -22,7 +22,7 @@ const createCreditsTable = (queryInstance, schema, Sequelize) => {
                 type: Sequelize.BIGINT,
                 unique: true,
                 primaryKey: true,
-                autoIncrement: false
+                autoIncrement: true
             },
             minerId: {
                 type: Sequelize.UUID,

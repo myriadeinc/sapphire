@@ -94,7 +94,7 @@ const initUmzug = (opt, log) => {
       throw new Error(
           `Database config value `+
         `migrations:pattern must be a valid`+
-        ` regular expression: ${e.message}`
+        ` regular expression: ${e.message}`,
       );
     }
   }

@@ -17,10 +17,11 @@ const MinerModel = DB.sequelize.define('Miners', {
 
   monero_balance: {
     type: DB.Sequelize.BIGINT,
-    allowNull: false,
-    defaultValue: 0,
+    allowNull: false
   }
 
+}, {
+  paranoid: true
 });
 
 MinerModel.hasMany(
@@ -29,6 +30,6 @@ MinerModel.hasMany(
 
 MinerModel.hasMany(
   MyriadeCreditModel, { foreignKey: 'minerId', targetKey: 'id' }
-)
+);
 
 module.exports = MinerModel;

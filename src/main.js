@@ -18,7 +18,7 @@ const main = async () => {
   logger.core.info('Messaging queue initialized');
 
   logger.core.info('Initializing database.');
-  await db.init(config.get('db'),logger.db);
+  await db.init(config.get('db'), logger.db);
   logger.core.info('Database initialized.');
 
   const port = config.get('port');
@@ -48,7 +48,7 @@ process.on('unhandledRejection', (err) => {
 });
 
 main()
-  .catch((err) => {
-    logger.core.error(err);
-    process.exit(1);
-  });
+    .catch((err) => {
+      logger.core.error(err);
+      process.exit(1);
+    });

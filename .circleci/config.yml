@@ -23,30 +23,36 @@ jobs:
     steps:
       - checkout
       - run:
-        name: Waiting for db to be ready
-        command: |
-          do
-            nc -z localhost 5432 && echo Success && exit 0              
-            echo -n .
-            sleep 1
-          done
-          echo Failed waiting for Dependencies && exit 1
+          name: Waiting for db to be ready
+          command: |
+            for i in `seq 1 10`;
+            do
+              nc -z localhost 5432 && echo Success && exit 0
+              echo -n .
+              sleep 1
+            done
+            echo Failed waiting for Postgres && exit 1
       - run:
-        name: Waiting for cache to be ready
-        command: |
-          do
-            nc -z localhost 6379 && echo Success && exit 0              
-            echo -n .
-            sleep 1
-          done
-          echo Failed waiting for Dependencies && exit 1
+          name: Waiting for cache to be ready
+          command: |
+            for i in `seq 1 10`;
+            do
+              nc -z localhost 6379 && echo Success && exit 0
+              echo -n .
+              sleep 1
+            done
+            echo Failed waiting for Postgres && exit 1
+      - run:
+          name: Installing dev dependencies
+          command: |
+            npm install
       - run:
           name: Run Tests
           command: |
             npm run test
-      - setup_remote_docker:
-          docker_layer_caching: true
-      - run:
-          name: Build and push Docker image
-          command: |
-            TAG=$(git show -s --pretty=%H) make build
+      # - setup_remote_docker:
+      #     docker_layer_caching: true
+      # - run:
+      #     name: Build and push Docker image
+      #     command: |
+      #       TAG=$(git show -s --pretty=%H) make build

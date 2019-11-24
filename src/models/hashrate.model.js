@@ -7,28 +7,27 @@ const HashRateModel = DB.sequelize.define('Hashrates', {
   id: {
     type: DB.Sequelize.BIGINT,
     primaryKey: true,
-    autoIncrement: true
+    autoIncrement: true,
   },
   minerId: {
     type: DB.Sequelize.UUID,
     references: {
       model: 'Miners',
-      key: 'id'
-    }
+      key: 'id',
+    },
   },
 
   time: {
     type: DB.Sequelize.DATE,
-    defaultValue: DB.Sequelize.NOW
+    defaultValue: DB.Sequelize.NOW,
   },
 
   rate: {
     type: DB.Sequelize.BIGINT,
-    allowNull: false,
-    defaultValue: 0
-  }
+    allowNull: false
+  },
 
-},{
+}, {
   paranoid: true,
 });
 

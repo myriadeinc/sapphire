@@ -28,11 +28,6 @@ const createMinerTable = (queryInstance, schema, Sequelize) => {
                 type: Sequelize.BIGINT,
                 allowNull: false,
                 defaultValue: 0,
-            },    
-            myriade_credits: {
-                type: Sequelize.BIGINT,
-                defaultValue: 0,
-                allowNull: false,
             },
             createdAt: { type: Sequelize.DATE },
             updatedAt: { type: Sequelize.DATE },
