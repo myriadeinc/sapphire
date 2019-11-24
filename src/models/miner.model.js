@@ -24,6 +24,15 @@ const MinerModel = DB.sequelize.define('Miners', {
   paranoid: true,
 });
 
+MinerModel.prototype.toJSON = function() {
+  const self = this.dataValues;
+  const formatted_balance = parseFloat(Number(self.monero_balance)/10000000.0).toFixed(7);
+  return {
+    ...self,
+    monero_balance: formatted_balance,
+  };
+};
+
 MinerModel.hasMany(
     HashRateModel, {foreignKey: 'minerId', targetKey: 'id'},
 );

@@ -9,4 +9,3 @@ up:
 
 build: 
 	docker build -f Dockerfile -t myriadeinc/sapphire:${T} .
-	docker push myriadeinc/sapphire:${T}
