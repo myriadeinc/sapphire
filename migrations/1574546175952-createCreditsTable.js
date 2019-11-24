@@ -3,32 +3,42 @@
 const Migration = {
 
     up: (queryInterface, schema, Sequelize) => {
-        return createMinerTable(queryInterface, schema, Sequelize);
+        return createCreditsTable(queryInterface, schema, Sequelize);
 
     },
     
     down: (queryInterface, schema, Sequelize) => {
         return queryInterface.sequelize.transaction(async (transaction) => {
-            await queryInterface.dropTable({ tableName: 'Miners', schema });
+            await queryInterface.dropTable({ tableName: 'Credits', schema });
         });
     }
 };
 
-const createMinerTable = (queryInstance, schema, Sequelize) => {
+const createCreditsTable = (queryInstance, schema, Sequelize) => {
     return queryInstance.createTable(
-        'Miners',
+        'Credits',
         {
             id: {
-                type: Sequelize.UUID,
+                type: Sequelize.BIGINT,
                 unique: true,
                 primaryKey: true,
+                autoIncrement: true
+            },
+            minerId: {
+                type: Sequelize.UUID,
+                references: {
+                    model: 'Miners',
+                    key: 'id'
+                }
+            },
+            time: {
+                type: Sequelize.DATE,
                 allowNull: false
             },
-            monero_balance: {
+            credit: {
                 type: Sequelize.BIGINT,
-                allowNull: false,
-                defaultValue: 0,
-            },
+                allowNull: false
+            },    
             createdAt: { type: Sequelize.DATE },
             updatedAt: { type: Sequelize.DATE },
             deletedAt: { type: Sequelize.DATE }

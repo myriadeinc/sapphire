@@ -3,7 +3,7 @@
 const Migration = {
 
     up: (queryInterface, schema, Sequelize) => {
-        return createMinerTable(queryInterface, schema, Sequelize);
+        return createHashrateTable(queryInterface, schema, Sequelize);
 
     },
     
@@ -14,7 +14,7 @@ const Migration = {
     }
 };
 
-const createMinerTable = (queryInstance, schema, Sequelize) => {
+const createHashrateTable = (queryInstance, schema, Sequelize) => {
     return queryInstance.createTable(
         'Hashrates',
         {
@@ -22,7 +22,7 @@ const createMinerTable = (queryInstance, schema, Sequelize) => {
                 type: Sequelize.BIGINT,
                 unique: true,
                 primaryKey: true,
-                autoIncrement: false
+                autoIncrement: true
             },
             minerId: {
                 type: Sequelize.UUID,

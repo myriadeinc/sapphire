@@ -49,14 +49,14 @@ const AuthMiddleware = {
     }
 
     return decodeAndVerify(tokenString)
-      .then((token) => {
-        req.body.variables.minerId = token.sub;
-        req.token = token;
-        next();
-      })
-      .catch((err) => {
-        res.status(403).send(err);
-      });
+        .then((token) => {
+          req.body.variables.minerId = token.sub;
+          req.token = token;
+          next();
+        })
+        .catch((err) => {
+          res.status(403).send(err);
+        });
   },
 };
 

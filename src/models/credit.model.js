@@ -2,7 +2,7 @@
 
 const DB = require('src/util/db.js');
 
-const HashRateModel = DB.sequelize.define('Hashrates', {
+const MyriadeCreditModel = DB.sequelize.define('Credits', {
 
   id: {
     type: DB.Sequelize.BIGINT,
@@ -22,7 +22,7 @@ const HashRateModel = DB.sequelize.define('Hashrates', {
     defaultValue: DB.Sequelize.NOW,
   },
 
-  rate: {
+  credit: {
     type: DB.Sequelize.BIGINT,
     allowNull: false
   },
@@ -32,4 +32,4 @@ const HashRateModel = DB.sequelize.define('Hashrates', {
 });
 
 
-module.exports = HashRateModel;
+module.exports = MyriadeCreditModel;
