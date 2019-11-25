@@ -11,17 +11,14 @@ const minerId_1 = uuid();
 
 const sampleMiners = [
     {
-
         id: minerId_1,
         monero_balance: 0,
     },
     {
-
         id: uuid(),
         monero_balance: 0,
     },
     {
-
         id: uuid(),
         monero_balance: 0,
     },
