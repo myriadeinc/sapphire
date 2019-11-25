@@ -1,0 +1,7 @@
+.circleci/
+.github/
+.vscode/
+v8-compile-cache-0/
+.eslintrc.js
+docker-compose.yml
+test/

@@ -9,6 +9,8 @@ const logger = require('src/util/logger.js').db;
 
 const DB = require('src/util/db.js');
 
+const MC_AMOUNT = 1000000; // HARD CODED FOR NOW, can only submit once
+
 const LotteryRepository = {
 
   newDraw: (time, pot=0) => {
@@ -32,6 +34,8 @@ const LotteryRepository = {
   },
 
   addMinerToDraw: (minerId, mc_amount) => {
+    // TODO: Process probability based draws instead of hard coding.
+    mc_amount = MC_AMOUNT;
     return DB.sequelize.transaction(async (t) => {
       const available_credits = await MyriadeCreditModel.findAll({
         where: {minerId},
@@ -39,7 +43,8 @@ const LotteryRepository = {
         limit: 1,
       });
 
-      if (0 >= available_credits.length || available_credits[0] < mc_amount) {
+      // console.log(available_credits[0], )
+      if (0 >= available_credits.length || Number(available_credits[0].credit) < mc_amount) {
         throw new Err('Insufficient fund');
       }
       const updated_amount = Number(available_credits[0].credit) - mc_amount;
@@ -63,7 +68,7 @@ const LotteryRepository = {
         drawId: draw.id,
       }, {transaction: t});
       return draw.update({
-        pot: draw.pot + mc_amount,
+        pot: Number(draw.pot) + mc_amount,
       }, {transaction: t});
     });
   },

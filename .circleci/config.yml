@@ -22,7 +22,8 @@ jobs:
       - image: rabbitmq:3.6.4-management
     steps:
       - checkout
-      - setup_remote_docker
+      - setup_remote_docker:
+          version: 18.06.0-ce
       - run:
           name: Waiting for db to be ready
           command: |
@@ -51,9 +52,19 @@ jobs:
           name: Run Tests
           command: |
             npm run test
-      - deploy:
-          name: Build and push Docker image
+      - run:
+          name: Rebuild production dependencies
           command: |
-            if [ "$ {CIRCLE_BRANCH}" == "master" ]; then
-              TAG=$(git show -s --pretty=%H) make build
+            rm -rf node_modules
+            npm install --production
+      - run:
+          name: Build Docker image
+          command: |
+            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            TAG=$(git show -s --pretty=%H) make build
+      - deploy:
+          name: Push & deploy build
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              docker push myriadeinc/sapphire:$(git show -s --pretty=%H)
             fi

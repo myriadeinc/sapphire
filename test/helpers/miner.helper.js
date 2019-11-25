@@ -11,17 +11,14 @@ const minerId_1 = uuid();
 
 const sampleMiners = [
     {
-
         id: minerId_1,
         monero_balance: 0,
     },
     {
-
         id: uuid(),
         monero_balance: 0,
     },
     {
-
         id: uuid(),
         monero_balance: 0,
     },
@@ -49,19 +46,19 @@ const sampleHashrates =[
 const sampleCredits = [
     {
         time: Date.now(),
-        credit: 10
+        credit: 1000000
     },
     {
         time: Date.now() - 100,
-        credit: 8
+        credit: 800000
     },
     {
         time: Date.now() - 200,
-        credit: 1
+        credit: 100000
     },
     {
         time: Date.now() - 300,
-        credit: 4
+        credit: 400000
     },
 ]
 

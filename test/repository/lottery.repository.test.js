@@ -60,17 +60,18 @@ describe('Lottery repository unit tests', () => {
     let draw = await LotteryDrawModel.findOne({where: {is_active: true}});
     
     draw.should.not.be.null;
-    const draw_pot = draw.pot;
+    const draw_pot = Number(draw.pot);
 
     let miner1_id = MinerTestingHelper.minerId_1;
     await MinerTestingHelper.addSampleCredits(miner1_id);
     
     const miner1 = await MinerModel.findOne({where: {id: miner1_id}});
 
-    draw = await LotteryRepository.addMinerToDraw(miner1_id, 5);
+    draw = await LotteryRepository.addMinerToDraw(miner1_id, 1000000);
     const updated_miner_credits = await MinerTestingHelper.getMinerCredits(miner1_id)
-    updated_miner_credits.should.equal(5);
-    draw.pot.should.equal((draw_pot + 5).toString());
+
+    updated_miner_credits.should.equal(0);
+    draw.pot.should.equal(draw_pot + 1000000);
 
     let miners = await draw.getMiners();
     miners.should.not.be.null;
