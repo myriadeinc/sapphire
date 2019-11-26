@@ -134,8 +134,6 @@ const MinerRepository = {
      * Add the query
      */
     return ShareModel.find();
-
-
   },
 
 };
