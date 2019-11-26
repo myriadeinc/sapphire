@@ -3,7 +3,9 @@
 const MinerModel = require('src/models/miner.model.js');
 const HashRateModel = require('src/models/hashrate.model.js');
 const MyriadeCreditModel = require('src/models/credit.model.js');
+const ShareModel = require('src/models/share.model.js');
 
+const Op = require('src/util/db.js').Sequelize.Op;
 const logger = require('src/util/logger.js').db;
 
 const MinerRepository = {
@@ -56,6 +58,31 @@ const MinerRepository = {
       time,
     });
   },
+
+
+  updateShares: ({minerId, shares, difficulty, time}) => {
+    return ShareModel.create(
+    {
+      minerId,
+      shares,
+      difficulty,
+      time
+    });
+  },
+
+  getShares: (minerId, startTime, endTime = null) => {
+    endTime = endTime || Date.now();
+    return ShareModel.findAll({
+      where: {
+        minerId,
+        time: {
+          [Op.between] : [startTime, endTime]
+        },
+        order: [['time', 'DESC']]
+      }
+    }) 
+  },
+
 
   updateCredit: ({minerId, credit, time}) => {
     return MyriadeCreditModel.create({

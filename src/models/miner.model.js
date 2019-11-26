@@ -5,6 +5,7 @@ const DB = require('src/util/db.js');
 
 const HashRateModel = require('src/models/hashrate.model.js');
 const MyriadeCreditModel = require('src/models/credit.model.js');
+const ShareModel = require('src/models/share.model.js');
 
 const MinerModel = DB.sequelize.define('Miners', {
 
@@ -39,6 +40,10 @@ MinerModel.hasMany(
 
 MinerModel.hasMany(
     MyriadeCreditModel, {foreignKey: 'minerId', targetKey: 'id'},
+);
+
+MinerModel.hasMany(
+  ShareModel, {foreign_key: 'minerId', targetKey: 'id'}
 );
 
 module.exports = MinerModel;
