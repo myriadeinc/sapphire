@@ -30,7 +30,7 @@ const MinerMetricsService = {
         time: data.timestamp});
       
       if(data.jackpot){
-        
+        this.calculateShares();
       }
       
     } catch (err) {
@@ -38,6 +38,28 @@ const MinerMetricsService = {
     }
   },
 
+  calculateShares: async () => {
+    const allShares = MinerRepository.getMinerShares();
+    let now = Date.now();
+    /**
+     * multiply shares*difficulty
+     * sum by minerId
+     * divide by timeInterval
+     * 
+     * sum all minerId hashrates to get pool hashrate
+     * 
+     */
+    allShares.map(function(minerId, startTime, difficulty, shares) {
+      const timeInterval = now - startTime;
+      
+
+
+
+    });
+
+
+
+  },
   init: () => {
     return mq.registerConsumer(MinerMetricsService.processData);
   },

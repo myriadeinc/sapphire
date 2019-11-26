@@ -115,6 +115,17 @@ const MinerRepository = {
       },
     });
   },
+
+
+  getMinerShares: () => {
+    /**
+     * Add the query
+     */
+    return ShareModel.find();
+
+
+  },
+
 };
 
 module.exports = MinerRepository;
