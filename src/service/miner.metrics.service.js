@@ -28,15 +28,37 @@ const MinerMetricsService = {
         shares: data.shares,
         difficulty: data.difficulty,
         time: data.timestamp});
-
-      if (data.jackpot) {
-
+      
+      if(data.jackpot){
+        this.calculateShares();
       }
     } catch (err) {
       logger.error(err);
     }
   },
 
+  calculateShares: async () => {
+    const allShares = MinerRepository.getMinerShares();
+    let now = Date.now();
+    /**
+     * multiply shares*difficulty
+     * sum by minerId
+     * divide by timeInterval
+     * 
+     * sum all minerId hashrates to get pool hashrate
+     * 
+     */
+    allShares.map(function(minerId, startTime, difficulty, shares) {
+      const timeInterval = now - startTime;
+      
+
+
+
+    });
+
+
+
+  },
   init: () => {
     return mq.registerConsumer(MinerMetricsService.processData);
   },
