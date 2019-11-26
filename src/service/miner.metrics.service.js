@@ -22,17 +22,16 @@ const MinerMetricsService = {
   processData: async (data) => {
     try {
       const minerId = await MinerRepository.getMiner(data.minerId);
-      
+
       await MinerRepository.updateShares({
-        minerId: miner, 
-        shares: data.shares, 
-        difficulty: data.difficulty, 
+        minerId: miner,
+        shares: data.shares,
+        difficulty: data.difficulty,
         time: data.timestamp});
-      
-      if(data.jackpot){
-        
+
+      if (data.jackpot) {
+
       }
-      
     } catch (err) {
       logger.error(err);
     }

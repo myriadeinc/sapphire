@@ -7,38 +7,37 @@ const ShareModel = DB.sequelize.define('Shares', {
   id: {
     type: DB.Sequelize.BIGINT,
     primaryKey: true,
-    autoIncrement: true
+    autoIncrement: true,
   },
 
   minerId: {
     type: DB.Sequelize.UUID,
-    allowNull: false
+    allowNull: false,
   },
 
   share: {
     type: DB.Sequelize.INTEGER,
-    allowNull: false
+    allowNull: false,
   },
 
   difficulty: {
     type: DB.Sequelize.BIGINT,
     allowNull: false,
   },
-  
+
   is_calculated: {
     type: DB.Sequelize.BOOLEAN,
     allowNull: false,
-    defaultValue: false
+    defaultValue: false,
   },
 
   time: {
     type: DB.Sequelize.DATE,
-    allowNull: false
-  }
+    allowNull: false,
+  },
 }, {
   paranoid: true,
-})
-
+});
 
 
 module.exports = ShareModel;

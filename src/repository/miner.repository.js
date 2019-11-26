@@ -60,27 +60,39 @@ const MinerRepository = {
   },
 
 
-  updateShares: ({minerId, shares, difficulty, time}) => {
+  insertShare: ({minerId, share, difficulty, time}) => {
     return ShareModel.create(
-    {
-      minerId,
-      shares,
-      difficulty,
-      time
-    });
+        {
+          minerId,
+          share,
+          difficulty,
+          time,
+        });
   },
 
-  getShares: (minerId, startTime, endTime = null) => {
+  getSharesByTime: (minerId, startTime, endTime = null) => {
     endTime = endTime || Date.now();
     return ShareModel.findAll({
+      attributes: ['id', 'minerId', 'difficulty', 'share', 'time', 'is_calculated'],
       where: {
         minerId,
         time: {
-          [Op.between] : [startTime, endTime]
+          [Op.between]: [startTime, endTime],
         },
-        order: [['time', 'DESC']]
-      }
-    }) 
+      },
+      order: [['time', 'DESC']],
+    });
+  },
+
+  getUncalculatedShares: (minerId) => {
+    return ShareModel.findAll({
+      attributes: ['id', 'minerId', 'difficulty', 'share', 'time', 'is_calculated'],
+      where: {
+        minerId,
+        is_calculated: false,
+      },
+      order: [['time', 'DESC']],
+    });
   },
 
 

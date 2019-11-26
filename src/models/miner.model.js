@@ -43,7 +43,7 @@ MinerModel.hasMany(
 );
 
 MinerModel.hasMany(
-  ShareModel, {foreign_key: 'minerId', targetKey: 'id'}
+    ShareModel, {foreign_key: 'minerId', targetKey: 'id'},
 );
 
 module.exports = MinerModel;

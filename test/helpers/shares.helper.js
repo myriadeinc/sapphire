@@ -21,13 +21,13 @@ const SharesHelper = {
       time: time2,
       difficulty: 1000000,
       share: 2,
-      is_calulated: false
+      is_calulated: true
     },
     {
       time: time3,
       difficulty: 1000000,
       share: 3,
-      is_calulated: false
+      is_calulated: true
     },
     {
       time: time4,
@@ -41,6 +41,14 @@ const SharesHelper = {
     return Promise.all(shares.map(s => {
       return ShareModel.create(s);
     }))
+  },
+
+  clearSampleShares: () => {
+    return ShareModel.destroy({
+      truncate: true,
+      cascade: true,
+      force: true
+    });
   }
 }
 
