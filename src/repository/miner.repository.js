@@ -10,6 +10,10 @@ const logger = require('src/util/logger.js').db;
 
 const MinerRepository = {
 
+  getAllMiners: () => {
+    return MinerModel.findAll();
+  },
+
   getMinerDataById: (id) => {
     return MinerModel.findByPk(id)
         .catch((err) => {
