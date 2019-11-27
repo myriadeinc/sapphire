@@ -8,6 +8,7 @@ const logger = require('src/util/logger.js');
 const db = require('src/util/db.js');
 const mq = require('src/util/mq.js');
 
+
 let server;
 
 const main = async () => {
@@ -30,6 +31,10 @@ const main = async () => {
     logger.core.info('Registrating MinerMetrics service listener');
     await require('src/service/miner.metrics.service.js').init();
     logger.core.info('MinerMetrics service listener registered');
+
+    logger.core.info('Registrating LotteryService jobs');
+    await require('src/service/lottery.service.js').init();
+    logger.core.info('LotteryService jobs registered');
   });
 };
 

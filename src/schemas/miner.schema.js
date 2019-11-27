@@ -17,11 +17,17 @@ const MinerSchema = {
       credit: Int!
     }
 
+    type ShareData {
+      share: Int,
+      time: String
+    }
+
     type MinerData {
       id: ID!,
       monero_balance: String,
       myriade_credits(page: Int): [MyriadeCredit],
       hashrates(page: Int): [Hashrate],
+      shares(start: String, end: String, page: Int): [ShareData]
     }
 
     type LotteryDraw {
@@ -71,10 +77,13 @@ const MinerSchema = {
       myriade_credits: (parent, args, context, info) => {
         return context.miner_repository.getMinerCredits(parent.id, args.page);
       },
+      // shares: (parent, args, context, info) => {
+      //   return null; // TO-DO!
+      // }
     },
     Query: {
       minerData: (parent, args, context, info) => {
-        return context.miner_repository.getMinerDataById(args.id)
+        return context.miner_repository.getMiner(args.id)
             .then((miner) => {
               return miner.toJSON();
             });
