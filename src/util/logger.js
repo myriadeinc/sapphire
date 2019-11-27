@@ -15,4 +15,5 @@ module.exports = {
   account: logger.child({component: 'account'}),
   db: logger.child({component: 'db'}),
   mq: logger.child({component: 'mq'}),
+  job: logger.child({component: 'job'}),
 };
