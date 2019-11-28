@@ -7,6 +7,12 @@ const logger = require('src/util/logger.js').core;
 const DB = require("src/util/db.js");
 
 const PayOutService = {
+    getBaseBlockreward: () => {
+        return 2;
+    },
+    getFullBlockReward: (blockHeight) => {},
+
+
     getNetworkHashrate: () => {
         axios.get().then(()=> {
 
