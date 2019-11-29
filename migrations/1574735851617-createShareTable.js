@@ -43,10 +43,9 @@ const createShareTable = (queryInstance, schema, Sequelize) => {
                 allowNull: false,
             },
             
-            is_calculated: {
-                type: Sequelize.BOOLEAN,
+            blockHeight: {
+                type: Sequelize.BIGINT,
                 allowNull: false,
-                defaultValue: false
             },
         
             time: {

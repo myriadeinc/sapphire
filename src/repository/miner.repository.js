@@ -64,12 +64,13 @@ const MinerRepository = {
   },
 
 
-  insertShare: ({minerId, share, difficulty, time}) => {
+  insertShare: ({minerId, share, difficulty, blockHeight, time}) => {
     return ShareModel.create(
         {
           minerId,
           share,
           difficulty,
+          blockHeight,
           time,
         });
   },
@@ -77,7 +78,7 @@ const MinerRepository = {
   getSharesByTime: (minerId, startTime, endTime = null) => {
     endTime = endTime || Date.now();
     return ShareModel.findAll({
-      attributes: ['id', 'minerId', 'difficulty', 'share', 'time', 'is_calculated'],
+      attributes: ['id', 'minerId', 'difficulty', 'share', 'time', 'blockHeight'],
       where: {
         minerId,
         time: {
@@ -88,12 +89,12 @@ const MinerRepository = {
     });
   },
 
-  getUncalculatedShares: (minerId) => {
+  getBlockShares: (minerId, blockHeight) => {
     return ShareModel.findAll({
-      attributes: ['id', 'minerId', 'difficulty', 'share', 'time', 'is_calculated'],
+      attributes: ['id', 'minerId', 'difficulty', 'share', 'time', 'blockHeight'],
       where: {
         minerId,
-        is_calculated: false,
+        blockHeight: blockheight,
       },
       order: [['time', 'DESC']],
     });

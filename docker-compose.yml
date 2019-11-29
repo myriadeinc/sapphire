@@ -27,7 +27,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - db_data:/var/lib/postgres/data
+      - ./db_data:/var/lib/postgres/data
     healthcheck:
       test: "pg_isready -h localhost -p 5432 -q -U postgres"
       interval: 1s

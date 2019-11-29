@@ -25,10 +25,9 @@ const ShareModel = DB.sequelize.define('Shares', {
     allowNull: false,
   },
 
-  is_calculated: {
-    type: DB.Sequelize.BOOLEAN,
-    allowNull: false,
-    defaultValue: false,
+  blockHeight: {
+    type: DB.Sequelize.BIGINT,
+    allowNull: false
   },
 
   time: {

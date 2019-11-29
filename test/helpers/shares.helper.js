@@ -15,25 +15,25 @@ const SharesHelper = {
       time: time1,
       difficulty: 10123213,
       share: 1,
-      is_calulated: false
+      blockHeight: 10
     },
     {
       time: time2,
       difficulty: 1000000,
       share: 2,
-      is_calulated: true
+      blockHeight: 10
     },
     {
       time: time3,
       difficulty: 1000000,
       share: 3,
-      is_calulated: true
+      blockHeight: 10
     },
     {
       time: time4,
       difficulty: 1000000,
       share: 4,
-      is_calulated: false
+      blockHeight: 10
     },
   ],
 

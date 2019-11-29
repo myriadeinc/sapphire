@@ -98,41 +98,19 @@ describe('Miner Repository Unit Tests', () => {
     await ShareTestingHelper.clearSampleShares();
   });
 
-  it('Should be able to find all uncalculated shares', async () => {
-    await ShareTestingHelper.clearSampleShares();
-
-    let sampleShares = ShareTestingHelper.sampleShares;
-
-    sampleShares = sampleShares.map(s => {
-      return {
-        minerId: MinerTestingHelper.minerId_1,
-        ...s
-      }
-    });
-    await ShareTestingHelper.createSampleShares(sampleShares);
-
-    let shares = await MinerRepository.getUncalculatedShares(MinerTestingHelper.minerId_1);
-
-    shares.should.not.be.null;
-
-    let res = _.reduce(shares, (accum, s) => {return accum || s.is_calculated}, false);
-    res.should.be.false;
-
-    await ShareTestingHelper.clearSampleShares();
-  })
-  
   it('Should insert miner shares', async () => {
     const shareData = {
       minerId: MinerTestingHelper.minerId_1,
       share: 1,
       difficulty: 1000000,
-      time: Date.now() - 200
+      blockHeight: 10,
+      time: Date.now() - 200,
     }
 
     let created_share = await MinerRepository.insertShare(shareData);
 
     created_share.should.not.be.null;
-    created_share.is_calculated.should.be.false;
+    created_share.blockHeight.should.equal(shareData.blockHeight.toString());
     created_share.minerId.should.equal(shareData.minerId);
     Number(created_share.share).should.equal(shareData.share);
     Number(created_share.difficulty).should.equal(shareData.difficulty);

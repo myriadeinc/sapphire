@@ -9,7 +9,7 @@ const testing = require('../test.init.js');
 const MinerTestingHelper = require('test/helpers/miner.helper.js');
 const ShareTestingHelper = require('test/helpers/shares.helper.js');
 
-const PAyoutService = require('src/service/payout.service.js');
+const PayoutService = require('src/service/payout.service.js');
 const MinerRepository = require('src/repository/miner.repository.js');
 
 
@@ -31,7 +31,6 @@ require('chai')
     before('Setting up miners', async () => {
       await MinerTestingHelper.clearAllMiners();
       await MinerTestingHelper.createSampleMiners();
-  
       await MinerTestingHelper.addSampleHashrates(MinerTestingHelper.minerId_1);
       await MinerTestingHelper.addSampleCredits(MinerTestingHelper.minerId_1);
     })
@@ -40,15 +39,12 @@ require('chai')
       await MinerTestingHelper.clearAllMiners();
     })
   
-    it('Should give each miner a constant payout', async () => {
-
-        const trigger = await PayoutService.constantPayout();
-
-
-
-      const miner = await MinerRepository.getMinerDataById(MinerTestingHelper.minerId_1);
-      miner.should.not.be.null;
-      miner.monero_balance.should.equal('0');
-    })
+    // it('Should give each miner a constant payout', async () => {
+    //   let blockHeight = 10;
+    //     const trigger = await PayoutService.actionPayout(blockHeight);
+    //   const miner = await MinerRepository.getMinerDataById(MinerTestingHelper.minerId_1);
+    //   miner.should.not.be.null;
+    //   miner.monero_balance.should.equal('0');
+    // })
   
   })
