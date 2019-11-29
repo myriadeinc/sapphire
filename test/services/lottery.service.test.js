@@ -43,7 +43,6 @@ describe('Lottery Service Unit tests', () => {
     let draw = await LotteryRepository.addMinerToDraw(miner1_id, 1000000);
     const pot = Number(draw.pot);
 
-
     const next_time = Date.now() + 1000;
 
     const new_draw = await LotteryService.tick(next_time);

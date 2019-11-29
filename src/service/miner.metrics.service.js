@@ -7,19 +7,9 @@ const axios = require('axios');
 const mq = require('src/util/mq.js');
 
 const logger = require('src/util/logger.js').core;
-
+const DB = require("src/util/db.js");
 
 const MinerMetricsService = {
-
-  getMoneroStats: () => {
-    return axios({
-      url: 'http://moneroblocks.info/api/get_stats/',
-      method: 'get',
-    })
-        .then(({data}) => {
-          return data;
-        });
-  },
 
   convertShareToHashrate: (shares, difficulty, timestamp, minerId) => {
     return 100;
@@ -31,30 +21,34 @@ const MinerMetricsService = {
 
   processData: async (data) => {
     try {
-      const miner = await MinerRepository.getMiner(data.minerId);
-      const miner_hashrate = MinerMetricsService.convertShareToHashrate(data.shares, data.difficulty, data.timestamp, data.minerId);
-      const monero_stats = MinerMetricsService.getMoneroStats();
-      const network_hashrate = monero_stats.hashrate;
-      const block_reward = monero_stats.last_reward;
-      await MinerRepository.updateHashrate({
-        minerId: miner.id,
-        rate: hashrate,
-        time: data.timestamp,
+      //const miner = await MinerRepository.getMiner(data.minerId);
+
+      await MinerRepository.insertShare({
+        minerId: data.minerId,
+        shares: data.shares,
+        difficulty: data.difficulty,
+        time: data.timestamp
       });
-      new_myriade_credits = MinerMetricsService.computeAward(miner_hashrate, network_hashrate, block_reward);
-      if (new_myriade_credits > 0) {
-        await MinerRepository.updateMiner({
-          minerId: miner.id,
-          data: {
-            myriade_credits: miner.myriade_credits + new_myriade_credits,
-          },
-        });
+
+      if (data.jackpot) {
+        await MinerMetricsService.calculateHashrates();
+        await MinerMetricsService.calculateRewards();
       }
     } catch (err) {
       logger.error(err);
     }
   },
 
+  calculateHashrates: async () => {
+
+  },
+
+  calculateRewards: async(totalReward, poolHashrate) => {
+    // Iterate through all the latest hashrates, for each miner, then compute the ratio for 
+    //  accrediting MC and save their new MC balance using MinerRepository.updateCredit
+
+    
+  },
   init: () => {
     return mq.registerConsumer(MinerMetricsService.processData);
   },
