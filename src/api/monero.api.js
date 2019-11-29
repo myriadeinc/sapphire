@@ -24,11 +24,29 @@ getCurrentBlockHeight(){
     return send_rpc('get_height', {}).height;
 }
 
- getBlockReward(blockHeight) {
-     return send_rpc('get_block_header_by_height', {blockHeight})
+ getFullBlockReward(blockHeight) {
+     return send_rpc('get_block_header_by_height', {"height": blockHeight})
      .then((result) => {
         return result.block_header.reward;
      });
+ }
+ /**
+  * @Todo Add proper base block reward calculation
+  * @param BigInt blockHeight 
+  */
+ getBaseBlockReward(blockHeight) {
+  return send_rpc('get_block_header_by_height', {"height": blockHeight})
+  .then((result) => {
+     return result.block_header.reward;
+  });
+}
+ getNetworkHashrate(blockHeight) {
+  return send_rpc('get_block_header_by_height', {"height": blockHeight})
+  .then((result)=>{
+    /* Hashrate = Difficulty*Share / time and 120s is block cycle length*/
+    return BigInt(result.block_header.difficulty)/120n;
+  });
+
  }
 
   /**

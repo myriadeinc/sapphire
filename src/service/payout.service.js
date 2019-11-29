@@ -2,6 +2,7 @@
 const axios = require('axios');
 
 const MinerRepository = require('src/repository/miner.repository.js');
+const moneroApi = require('src/api/monero.api.js');
 
 const logger = require('src/util/logger.js').core;
 const DB = require("src/util/db.js");
@@ -11,14 +12,6 @@ const PayOutService = {
     getBaseBlockreward: () => {
       // Hard-coded until ~Jan 2020 but actual base block reward is calculated from formula
         return 2;
-    },
-    getFullBlockReward: (blockHeight) => {},
-
-
-    getNetworkHashrate: () => {
-        axios.get().then(()=> {
-            return 10;
-        });
     },
 
 
@@ -48,17 +41,28 @@ const PayOutService = {
         await CreditModel.create({
           minerID: miner.id,
           time: now,
-          credit: this.constantFeePayout(minerHashrate,blockHeight,)
+          credit: this.constantPayout(minerHashrate,blockHeight)
         }), {transaction: t};
       }));
     });
 
     },
-    /**
-     * Calculate reward for each miner based on set fee
-     */
-    constantPayout: async() => {},
-    constantFeePayout: async () => {}
+
+    constantPayout: async (minerHashrate,blockHeight,useBaseReward=false) => {
+      let networkHashRate = await moneroApi.getNetworkHashrate(blockHeight);
+      let fullBlockReward = await moneroApi.getFullBlockReward(blockHeight);
+
+      if(baseReward){
+        let getBaseBlockreward = await moneroApi.getBaseBlockReward(blockHeight);
+        let credits = 10**7n * BigInt(baseBlockReward) * BigInt(minerHashrate/networkHashRate);
+        return credits;
+      }
+      let credits = 10**7n * BigInt(fullBlockReward) * BigInt(minerHashrate/networkHashRate);
+      
+      return credits;
+
+
+    }
 }
 
 module.exports = PayOutService;
