@@ -9,16 +9,32 @@ const DB = require("src/util/db.js");
 
 
 const PayOutService = {
-    getBaseBlockreward: () => {
-      // Hard-coded until ~Jan 2020 but actual base block reward is calculated from formula
-        return 2;
-    },
+
+  getPoolHashrate: async (blockheight) => {
+    const now = Date.now();
+    let poolHashrate = 0;
+    let allShares = ShareModel.findAll({
+      attributes: ['id', 'minerId', 'difficulty', 'share', 'time', 'blockHeight'],
+      where: {
+        blockHeight: blockheight,
+      },
+      order: [['time', 'DESC']]
+    });
+    const last = allShares[allShares.length -1].time;
+    const timeInterval = now/last;
+    _.reduce( allShares, (diificulty,share) => {
+
+    });
+    /**
+     * multiply difficulty * share, sum then divide over timeInterval
+     */
+  },
 
 
     actionPayout: async (blockHeight) => {
     const now = Date.now();
     const miners = await MinerRepository.getAllMiners();
-    let poolHashrate = 0;
+
     // Need to wrap all of it inside a DB transaction so that if one fails, all fails and DB
     //  performs a rollback to initial state. This provides strong guarantuee.
     await DB.sequelize.transaction(async (t) => {
@@ -45,6 +61,12 @@ const PayOutService = {
         }), {transaction: t};
       }));
     });
+
+    },
+
+    perBlockPayout: async (minerHashrate, blockHeight) => {
+      let fullBlockReward = await moneroApi.getFullBlockReward(blockHeight);
+      let credits = 10**7n * BigInt(fullBlockReward) * BigInt(minerHashrate/poolHashrate);
 
     },
 
