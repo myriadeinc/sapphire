@@ -4,10 +4,13 @@ const _ = require('lodash');
 
 const testing = require('../test.init.js');
 const MinerTestingHelper = require('test/helpers/miner.helper.js');
+const ShareTestingHelper = require('test/helpers/shares.helper.js');
 const MinerRepository = require('src/repository/miner.repository.js');
+
 
 const HashrateModel = require('src/models/hashrate.model.js');
 const CreditModel = require('src/models/credit.model.js');
+const ShareModel = require('src/models/share.model.js');
 
 require('chai')
   .use(require('chai-as-promised'))
@@ -69,6 +72,50 @@ describe('Miner Repository Unit Tests', () => {
     expected_credits.should.be.eql(credits);
   })
 
+  it('Should be able to range query miner shares by time', async () => {
+
+    const miner1_id = MinerTestingHelper.minerId_1;
+    const start_time = ShareTestingHelper.time1;
+    const end_time = ShareTestingHelper.time3;
+    let sampleShares = ShareTestingHelper.sampleShares;
+
+    sampleShares = sampleShares.map(s => {
+      return {
+        minerId: miner1_id,
+        ...s
+      }
+    });
+    await ShareTestingHelper.createSampleShares(sampleShares);
+
+    let shares = await MinerRepository.getSharesByTime(miner1_id, start_time, end_time);
+
+    shares.should.not.be.null;
+    shares.length.should.equal(3);
+
+    let sum = _.reduce(shares, (accum, s) => {
+      return accum + Number(s.share) }, 0);
+    sum.should.equal(6);
+    await ShareTestingHelper.clearSampleShares();
+  });
+
+  it('Should insert miner shares', async () => {
+    const shareData = {
+      minerId: MinerTestingHelper.minerId_1,
+      share: 1,
+      difficulty: 1000000,
+      blockHeight: 10,
+      time: Date.now() - 200,
+    }
+
+    let created_share = await MinerRepository.insertShare(shareData);
+
+    created_share.should.not.be.null;
+    created_share.blockHeight.should.equal(shareData.blockHeight.toString());
+    created_share.minerId.should.equal(shareData.minerId);
+    Number(created_share.share).should.equal(shareData.share);
+    Number(created_share.difficulty).should.equal(shareData.difficulty);
+  })
+  
   it('Should be able to update miner Hashrate', async () => {
     const miner2 = await MinerRepository.getMinerDataById(MinerTestingHelper.sampleMiners[1].id);
 
@@ -86,6 +133,7 @@ describe('Miner Repository Unit Tests', () => {
     hr.should.not.be.null;
     Number(hr.rate).should.equal(300);
   })
+  
 
   it('Should be able to update miner Credit', async () => {
     const miner3 = await MinerRepository.getMinerDataById(MinerTestingHelper.sampleMiners[2].id);
