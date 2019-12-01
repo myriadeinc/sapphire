@@ -17,20 +17,22 @@ const toBuffer = (obj) => {
 };
 
 const MQ = {
-  getChanne: () => {
+  getChannel: () => {
     return channel;
   },
 
   init: (url) => {
     return amq.connect(url)
-        .then((conn) => {
-          return conn.createChannel();
-        })
-        .then((ch) => {
-          channel = ch;
-          return true;
-        })
-        .catch(logger.error);
+      .then((conn) => {
+        return conn.createChannel();
+      })
+      .then((ch) => {
+        channel = ch;
+        return true;
+      })
+      .catch(err => {
+        logger.error(err);
+      });
   },
 
   send: (msg) => {

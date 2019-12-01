@@ -21,8 +21,6 @@ const MinerMetricsService = {
 
   processData: async (data) => {
     try {
-      //const miner = await MinerRepository.getMiner(data.minerId);
-
       await MinerRepository.insertShare({
         minerId: data.minerId,
         shares: data.shares,
@@ -44,10 +42,7 @@ const MinerMetricsService = {
   },
 
   calculateRewards: async(totalReward, poolHashrate) => {
-    // Iterate through all the latest hashrates, for each miner, then compute the ratio for 
-    //  accrediting MC and save their new MC balance using MinerRepository.updateCredit
-
-    
+        
   },
   init: () => {
     return mq.registerConsumer(MinerMetricsService.processData);

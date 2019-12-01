@@ -13,14 +13,14 @@ let server;
 
 const main = async () => {
   logger.core.info(`Starting Sapphire service`);
+  
+  logger.core.info('Initializing database.');
+  await db.init(config.get('db'), logger.db);
+  logger.core.info('Database initialized.');
 
   logger.core.info('Initializing messaging queue RabbitMQ');
   await mq.init(config.get('rabbitmq:url'));
   logger.core.info('Messaging queue initialized');
-
-  logger.core.info('Initializing database.');
-  await db.init(config.get('db'), logger.db);
-  logger.core.info('Database initialized.');
 
   const port = config.get('port');
   const app = require('./app');
