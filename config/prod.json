@@ -1,0 +1,7 @@
+{
+  "db": {
+    "dialect_options": {
+        "ssl": true
+    }
+  }
+}

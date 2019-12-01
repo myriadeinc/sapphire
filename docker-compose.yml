@@ -18,6 +18,11 @@ services:
     depends_on:
       db:
           condition: service_healthy
+  mq:
+    image: rabbitmq:3.6.4-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
   db:
     image: postgres:9.6
     environment:

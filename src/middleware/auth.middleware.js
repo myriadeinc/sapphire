@@ -4,7 +4,7 @@ const _ = require('lodash');
 const jwt = require('jsonwebtoken');
 
 const config = require('src/util/config.js');
-
+const logger = require('src/util/logger.js').account; 
 const decodeAndVerify = (token) => {
   return new Promise((resolve, reject) => {
     let decodedToken;
@@ -27,6 +27,7 @@ const AuthMiddleware = {
     ) {
       next();
     } else {
+      logger.error(`Failed login attempt for shared secret`)
       res.sendStatus(403);
     }
   },
@@ -45,18 +46,20 @@ const AuthMiddleware = {
     }
 
     if (!tokenString) {
+      logger.error('Failed authentication: no JWT token provided');
       res.sendStatus(403);
     }
 
     return decodeAndVerify(tokenString)
-        .then((token) => {
-          req.body.variables.minerId = token.sub;
-          req.token = token;
-          next();
-        })
-        .catch((err) => {
-          res.status(403).send(err);
-        });
+      .then((token) => {
+        req.body.variables.minerId = token.sub;
+        req.token = token;
+        next();
+      })
+      .catch((err) => {
+        logger.error(`Failed authentication for ${tokenString} : ${err}`);
+        res.sendStatus(403);
+      });
   },
 };
 

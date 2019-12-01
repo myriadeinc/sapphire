@@ -6,7 +6,7 @@ const MyriadeCreditModel = require('src/models/credit.model.js');
 const ShareModel = require('src/models/share.model.js');
 
 const Op = require('src/util/db.js').Sequelize.Op;
-const logger = require('src/util/logger.js').db;
+const logger = require('src/util/logger.js').minerRepository;
 
 const MinerRepository = {
 
@@ -16,9 +16,10 @@ const MinerRepository = {
 
   getMinerDataById: (id) => {
     return MinerModel.findByPk(id)
-        .catch((err) => {
-          logger.error(err);
-        });
+      .catch((err) => {
+        logger.error(err);
+        throw err;
+      });
   },
 
   getMinerHashrates: (id, page) => {
@@ -35,6 +36,9 @@ const MinerRepository = {
       offset: ((page-1)*50),
       limit: 50,
       subQuery: false,
+    }).catch((err) => {
+      logger.error(err);
+      throw err;
     });
   },
 
@@ -52,6 +56,9 @@ const MinerRepository = {
       offset: ((page-1)*50),
       limit: 50,
       subQuery: false,
+    }).catch((err) => {
+      logger.error(err);
+      throw err;
     });
   },
 
@@ -60,19 +67,24 @@ const MinerRepository = {
       minerId,
       rate: hashrate,
       time,
+    }).catch((err) => {
+      logger.error(err);
+      throw err;
     });
   },
 
-
   insertShare: ({minerId, share, difficulty, blockHeight, time}) => {
     return ShareModel.create(
-        {
-          minerId,
-          share,
-          difficulty,
-          blockHeight,
-          time,
-        });
+      {
+        minerId,
+        share,
+        difficulty,
+        blockHeight,
+        time,
+      }).catch((err) => {
+        logger.error(err);
+        throw err;
+      });
   },
 
   getSharesByTime: (minerId, startTime, endTime = null) => {
@@ -86,6 +98,9 @@ const MinerRepository = {
         },
       },
       order: [['time', 'DESC']],
+    }).catch((err) => {
+      logger.error(err);
+      throw err;
     });
   },
 
@@ -97,6 +112,9 @@ const MinerRepository = {
         blockHeight: blockheight,
       },
       order: [['time', 'DESC']],
+    }).catch((err) => {
+      logger.error(err);
+      throw err;
     });
   },
 
@@ -106,6 +124,9 @@ const MinerRepository = {
       minerId,
       credit,
       time,
+    }).catch((err) => {
+      logger.error(err);
+      throw err;
     });
   },
 
@@ -115,13 +136,15 @@ const MinerRepository = {
         id: minerId,
       },
       defaults: {
-        monero_balance: 0,
-        myriade_credits: 0,
+        monero_balance: 0
       },
     })
-        .then(([miner, created]) => {
-          return miner;
-        });
+    .then(([miner, created]) => {
+      return miner;
+    }).catch((err) => {
+      logger.error(err);
+      throw err;
+    });
   },
 
   updateMiner: ({minerId, data}) => {
@@ -130,6 +153,9 @@ const MinerRepository = {
       where: {
         id: minerId,
       },
+    }).catch((err) => {
+      logger.error(err);
+      throw err;
     });
   },
 
