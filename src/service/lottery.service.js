@@ -52,6 +52,10 @@ const LotteryService = {
     }
     const participants = await currentDraw.getMiners();
 
+    if (0 === participants.length){
+      return;
+    }
+
     const winner_idx = getRandomInt(participants.length);
 
     const winner = participants[winner_idx];
