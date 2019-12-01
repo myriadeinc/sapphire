@@ -43,7 +43,6 @@ const LotteryRepository = {
         limit: 1,
       });
 
-      // console.log(available_credits[0], )
       if (0 >= available_credits.length || Number(available_credits[0].credit) < mc_amount) {
         throw new Err('Insufficient fund');
       }
