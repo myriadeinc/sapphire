@@ -17,8 +17,9 @@ const toBuffer = (obj) => {
 };
 
 const MQ = {
-
-  channel,
+  getChanne: () => {
+    return channel;
+  },
 
   init: (url) => {
     return amq.connect(url)
@@ -26,17 +27,17 @@ const MQ = {
           return conn.createChannel();
         })
         .then((ch) => {
-          MQ.channel = ch;
+          channel = ch;
           return true;
         })
         .catch(logger.error);
   },
 
   send: (msg) => {
-    return MQ.channel.assertQueue(queue)
+    return channel.assertQueue(queue)
         .then((ok) => {
           logger.info(`Sending: ${msg}\n on queue ${queue}`);
-          return MQ.channel.sendToQueue(queue, toBuffer(msg));
+          return channel.sendToQueue(queue, toBuffer(msg));
         })
         .then(() => {
           return 0;
@@ -49,19 +50,19 @@ const MQ = {
   },
 
   registerConsumer: (cb) => {
-    return MQ.channel.assertQueue(queue)
-        .then((ok) => {
-          return MQ.channel.consume(queue, (msg) => {
-            if (null !== msg) {
-              MQ.channel.ack(msg);
-              logger.info(`Consuming message: ${msg.content.toString()}\n from queue ${queue}`);
-              return cb(JSON.parse(msg.content.toString()));
-            }
-          });
-        })
-        .catch((err) => {
-          logger.error(err);
+    return channel.assertQueue(queue)
+      .then((ok) => {
+        return channel.consume(queue, (msg) => {
+          if (null !== msg) {
+            channel.ack(msg);
+            logger.info(`Consuming message: ${msg.content.toString()}\n from queue ${queue}`);
+            return cb(JSON.parse(msg.content.toString()));
+          }
         });
+      })
+      .catch((err) => {
+        logger.error(err);
+      });
   },
 
 };
