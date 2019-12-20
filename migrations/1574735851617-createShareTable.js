@@ -20,6 +20,7 @@ const createShareTable = (queryInstance, schema, Sequelize) => {
         {
             id: {
                 type: Sequelize.BIGINT,
+                unique: true,
                 primaryKey: true,
                 autoIncrement: true
             },

@@ -1,49 +1,79 @@
 'use strict';
 const testing = require('../test.init.js');
-const uuid = require('uuid/v4');
+const fakerStatic = require('faker');
+
+const uuid = require('uuid');
 
 const MinerModel = require('src/models/miner.model.js');
 
 const HashrateModel = require('src/models/hashrate.model.js');
 const CreditModel = require('src/models/credit.model.js');
+const ShareModel = require('src/models/share.model.js');
 
 const minerId_1 = uuid();
 
-const sampleMiners = [
+const allMiners = [
     {
         id: minerId_1,
-        monero_balance: 0,
+        monero_balance: fakerStatic.random.number()
     },
     {
-        id: uuid(),
-        monero_balance: 0,
+        id: fakerStatic.random.uuid(),
+        monero_balance: fakerStatic.random.number()
     },
     {
-        id: uuid(),
-        monero_balance: 0,
+        id: fakerStatic.random.uuid(),
+        monero_balance: fakerStatic.random.number()
+    }
+    
+];
+
+
+const allShares = [
+    {
+        share: 1,
+        difficulty: fakerStatic.random.number(),
+        blockHeight: 1000,
+        time: Date.now()
+    },
+    {
+        share: 1,
+        difficulty: fakerStatic.random.number(),
+        blockHeight: 1000,
+        time: Date.now() -10
+    },
+    {
+        share: 1,
+        difficulty: fakerStatic.random.number(),
+        blockHeight: 1000,
+        time: Date.now() - 20
+    },
+    {
+        share: 1,
+        difficulty: fakerStatic.random.number(),
+        blockHeight: 1000,
+        time: Date.now() - 120
+    },
+    
+];
+
+const allHashrates = [
+    {
+        time: Date.now(),
+        rate: 3239283
+    },
+    {
+        time: Date.now()-1000,
+        rate: 2239283
+    },
+    {
+        time: Date.now()-2000,
+        rate: 1239283
     },
 ];
 
-const sampleHashrates =[
-    {
-        time: Date.now(),
-        rate: 50
-    },
-    {
-        time: Date.now() - 100,
-        rate: 70
-    },
-    {
-        time: Date.now() - 200,
-        rate: 80
-    },
-    {
-        time: Date.now() - 300,
-        rate: 90
-    },
-]
 
-const sampleCredits = [
+const allCredits = [
     {
         time: Date.now(),
         credit: 1000000
@@ -81,17 +111,34 @@ const clearAllMiners = () => {
             cascade: true,
             force: true
         })
+    })
+    .then(() => {
+        return ShareModel.destroy({
+            truncate: true,
+            cascade: true,
+            force: true
+        })
     });
 }
 
 const createSampleMiners = () => {
-    return Promise.all(sampleMiners.map(miner => {
+    return Promise.all(allMiners.map(miner => {
         return MinerModel.create(miner);
     }));
 }
 
+
+const addSampleShares = (minerId) =>{
+    return Promise.all(allShares.map(sh => {
+        return ShareModel.create({
+            minerId,
+            ...sh
+        });
+    }));
+}
+
 const addSampleHashrates = (minerId) =>{
-    return Promise.all(sampleHashrates.map(hr => {
+    return Promise.all(allHashrates.map(hr => {
         return HashrateModel.create({
             minerId,
             ...hr
@@ -100,7 +147,7 @@ const addSampleHashrates = (minerId) =>{
 }
 
 const addSampleCredits = (minerId) =>{
-    return Promise.all(sampleCredits.map(c => {
+    return Promise.all(allCredits.map(c => {
         return CreditModel.create({
             minerId,
             ...c
@@ -122,10 +169,12 @@ const getMinerCredits = async (minerId) => {
 
 const MinerHelpers = {
     minerId_1,
-    sampleMiners,
-    sampleCredits,
-    sampleHashrates,
+    allMiners, 
+    allShares, 
+    allHashrates,
+    allCredits, 
     clearAllMiners,
+    addSampleShares,
     addSampleHashrates,
     addSampleCredits,
     createSampleMiners,

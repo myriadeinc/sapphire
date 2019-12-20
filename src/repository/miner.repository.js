@@ -75,31 +75,17 @@ const MinerRepository = {
         });
   },
 
-  getSharesByTime: (minerId, startTime, endTime = null) => {
-    endTime = endTime || Date.now();
-    return ShareModel.findAll({
-      attributes: ['id', 'minerId', 'difficulty', 'share', 'time', 'blockHeight'],
-      where: {
-        minerId,
-        time: {
-          [Op.between]: [startTime, endTime],
-        },
-      },
-      order: [['time', 'DESC']],
-    });
-  },
-
   getBlockShares: (minerId, blockHeight) => {
     return ShareModel.findAll({
-      attributes: ['id', 'minerId', 'difficulty', 'share', 'time', 'blockHeight'],
+      attributes: ['minerId', 'difficulty', 'share', 'time', 'blockHeight'],
       where: {
         minerId,
-        blockHeight: blockheight,
+        blockHeight
       },
       order: [['time', 'DESC']],
+      subQuery: false
     });
   },
-
 
   updateCredit: ({minerId, credit, time}) => {
     return MyriadeCreditModel.create({
@@ -131,14 +117,6 @@ const MinerRepository = {
         id: minerId,
       },
     });
-  },
-
-
-  getMinerShares: () => {
-    /**
-     * Add the query
-     */
-    return ShareModel.find();
   },
 
 };

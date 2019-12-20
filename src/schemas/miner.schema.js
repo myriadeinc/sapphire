@@ -17,8 +17,10 @@ const MinerSchema = {
       credit: Int!
     }
 
-    type ShareData {
+    type Shares {
       share: Int,
+      difficulty: Int,
+      blockHeight: Int,
       time: String
     }
 
@@ -27,7 +29,7 @@ const MinerSchema = {
       monero_balance: String,
       myriade_credits(page: Int): [MyriadeCredit],
       hashrates(page: Int): [Hashrate],
-      shares(start: String, end: String, page: Int): [ShareData]
+      shares(start: String, end: String, page: Int): [Shares]
     }
 
     type LotteryDraw {

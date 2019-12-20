@@ -12,7 +12,10 @@ const ShareModel = DB.sequelize.define('Shares', {
 
   minerId: {
     type: DB.Sequelize.UUID,
-    allowNull: false,
+    references: {
+      model: 'Miners',
+      key: 'id',
+    },
   },
 
   share: {
