@@ -32,9 +32,6 @@ const main = async () => {
     await require('src/service/miner.metrics.service.js').init();
     logger.core.info('MinerMetrics service listener registered');
 
-    logger.core.info('Registrating LotteryService jobs');
-    await require('src/service/lottery.service.js').init();
-    logger.core.info('LotteryService jobs registered');
   });
 };
 
