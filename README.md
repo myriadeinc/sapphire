@@ -14,6 +14,9 @@ Gets requests from emerald and updates the databse. Rabbitmq is set up on Sapphi
 `Sapphire` requires `Redis`, `Rabitmq`, and a database `URL` to run. To run it locally, set up the docker instance as outlined in Web.
 
 ## Purpose
+**TLDR** Two main jobs:
+- Receive data from `emerald` and save it properly (mapped to hashrate, shares, and credits)
+- Expose relevant data (with authentication) to clients (show their historical hashrate, myriade credits, etc. )
 
 `Sapphire` is designed to accept incoming data from `Emerald` and save it to the main database for users. It is also designed to provide metrics/analytics for the users via a `GraphQL` interface.
 

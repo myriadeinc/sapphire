@@ -35,21 +35,22 @@ const MQ = {
       });
   },
 
-  send: (msg) => {
-    return channel.assertQueue(queue)
-        .then((ok) => {
-          logger.info(`Sending: ${msg}\n on queue ${queue}`);
-          return channel.sendToQueue(queue, toBuffer(msg));
-        })
-        .then(() => {
-          return 0;
-        })
-        .catch((err) => {
-          logger.error(err);
-          logger.error(`Error occured while sending: \n ${msg}`);
-          return -1;
-        });
-  },
+  // Don't need to send data for Sapphire
+  // send: (msg) => {
+  //   return channel.assertQueue(queue)
+  //       .then((ok) => {
+  //         logger.info(`Sending: ${msg}\n on queue ${queue}`);
+  //         return channel.sendToQueue(queue, toBuffer(msg));
+  //       })
+  //       .then(() => {
+  //         return 0;
+  //       })
+  //       .catch((err) => {
+  //         logger.error(err);
+  //         logger.error(`Error occured while sending: \n ${msg}`);
+  //         return -1;
+  //       });
+  // },
 
   registerConsumer: (cb) => {
     return channel.assertQueue(queue)
