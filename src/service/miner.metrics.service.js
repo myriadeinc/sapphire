@@ -27,22 +27,20 @@ const MinerMetricsService = {
         difficulty: data.difficulty,
         time: data.timestamp
       });
-
-      if (data.jackpot) {
-        await MinerMetricsService.calculateHashrates();
-        await MinerMetricsService.calculateRewards();
-      }
+      await MinerMetricsService.calculateHashrates();
+      await MinerMetricsService.calculateRewards();
+      
     } catch (err) {
       logger.error(err);
     }
   },
 
   calculateHashrates: async () => {
-
+      return true;
   },
 
   calculateRewards: async(totalReward, poolHashrate) => {
-        
+        return true;
   },
   init: () => {
     return mq.registerConsumer(MinerMetricsService.processData);

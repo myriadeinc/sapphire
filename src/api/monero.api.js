@@ -6,7 +6,7 @@ const axios = require('axios');
 const send_rpc = (method, data) => {
   return axios({
     url: `http://${config.get('monero:daemon:host')}:${config.get('monero:daemon:port')}/json_rpc`,
-    method: 'post',
+    method: 'POST',
     data: {
       json_rpc: '2.0',
       id: '0',
@@ -39,13 +39,6 @@ getCurrentBlockHeight(){
     return send_rpc('getlastblockheader', {});
   }
 
-  /**
-    * @description Submit a block to the daemon
-    * @param {object} buffer Shared buffer constructed with xmr utilities
-    */
-  submit(buffer) {
-    return send_rpc('submitblock', [buffer.toString('hex')]);
-  }
 }
 
 module.exports = MoneroApi;

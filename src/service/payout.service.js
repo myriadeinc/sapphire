@@ -9,12 +9,11 @@ const DB = require("src/util/db.js");
 
 const PayOutService = {
     getBaseBlockreward: () => {
-      // Hard-coded until ~Jan 2020 but actual base block reward is calculated from formula
-        return 2;
+      return 0;
     },
-    getFullBlockReward: (blockHeight) => {},
-
-
+    getFullBlockReward: (blockHeight) => {
+      return 0;
+    },
     getNetworkHashrate: () => {
         axios.get().then(()=> {
             return 10;
@@ -48,7 +47,7 @@ const PayOutService = {
         await CreditModel.create({
           minerID: miner.id,
           time: now,
-          credit: this.constantFeePayout(minerHashrate,blockHeight,)
+          credit: this.constantFeePayout(minerHashrate,blockHeight)
         }), {transaction: t};
       }));
     });
