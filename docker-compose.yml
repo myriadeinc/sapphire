@@ -7,7 +7,7 @@ services:
     build:
       context: ${SAPPHIRE_DIR}
       dockerfile: Dockerfile.dev
-    image: myriadeinc/sapphire:dev
+    # image: myriadeinc/sapphire:dev
     command: ["bash", "-c", "npm install && npm run migration:up && npm run start:dev"]
     volumes:
       - ${SAPPHIRE_DIR}:/usr/src/app

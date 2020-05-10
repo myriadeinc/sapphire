@@ -33,8 +33,6 @@ const MinerSchema = {
       minerData(id: ID!): MinerData
     }
 
-    type Mutation {
-    }
   `),
   context: {
     miner_repository: MinerRepository,
@@ -61,10 +59,7 @@ const MinerSchema = {
               return miner.toJSON();
             });
       },
-    },
-    Mutation: {
-      
-    },
+    }
   },
 };
 

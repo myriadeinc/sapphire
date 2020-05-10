@@ -20,15 +20,19 @@ const MinerMetricsService = {
   },
 
   processData: async (data) => {
+    
     try {
+
       await MinerRepository.insertShare({
         minerId: data.minerId,
-        shares: data.shares,
+        share: data.share,
         difficulty: data.difficulty,
-        time: data.timestamp
+        blockHeight: data.blockHeight,
+        time: new Date(data.time)
       });
-      await MinerMetricsService.calculateHashrates();
-      await MinerMetricsService.calculateRewards();
+      // We can also calculate these on the frontend side with heavy math
+      // await MinerMetricsService.calculateHashrates();
+      // await MinerMetricsService.calculateRewards();
       
     } catch (err) {
       logger.error(err);

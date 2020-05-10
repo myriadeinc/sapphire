@@ -4,7 +4,8 @@ const amq = require('amqplib');
 const logger = require('src/util/logger.js').mq;
 const config = require('src/util/config.js');
 
-const queue = config.get('rabbitmq:queue');
+const queue = config.get('rabbitmq:queue') || 'Miner::Metrics';
+
 let channel;
 
 const toBuffer = (obj) => {
