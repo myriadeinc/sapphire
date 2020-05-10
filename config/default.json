@@ -37,6 +37,6 @@
     },
     "log": {
         "logdna_api_token": "__REPLACE__"
-    },
+    }
     
 }
