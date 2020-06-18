@@ -36,14 +36,15 @@ describe('Miner Repository Unit Tests', () => {
     it('Should insert miner shares', async () => {
         const refHeight = 100n;
         const shareData = ShareTestingHelper.generateRandomShare(refHeight);
+        const minerId = MinerTestingHelper.minerId_1;
 
-        let created_share = await MinerRepository.insertShare(shareData);
+        let created_share = await MinerRepository.insertShare(minerId, shareData.share, shareData.difficulty, refHeight, new Date());
 
         created_share.should.not.be.null;
         created_share.blockHeight.should.equal(refHeight.toString());
-        created_share.minerId.should.equal(shareData.minerId);
-        (created_share.share).toString().should.equal(shareData.share);
-        (created_share.difficulty).toString().should.equal(shareData.difficulty);
+        created_share.minerId.should.equal(minerId);
+        (created_share.share).toString().should.equal(shareData.share.toString());
+        (created_share.difficulty).toString().should.equal(shareData.difficulty.toString());
     })
 
     // it('Should be able to fetch miner hashrates', async () => {
