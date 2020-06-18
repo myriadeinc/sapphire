@@ -44,41 +44,35 @@ describe("Miner Metrics Service Functional Tests", () => {
     });
 
     it("Should be able to calculate proper pool and miner hashrate", async () => {
-        try {
-            await MinerMetricsService.convertSharesToHashrate(refHeight);
-        } catch (err) {
-            console.dir(err)
-        }
+
+        await MinerMetricsService.convertSharesToHashrate(refHeight);
+
 
         let poolRate = 0n;
         for (const miner of minerData) {
-            const minerStats = await Promise.all([
-                HashrateModel.findOne({
-                    where: {
-                        minerId: miner.id,
-                        blockHeight: refHeight
-                    },
-                    raw: true
-                }),
-                MinerRepository.getBlockShares(
-                    miner.id,
-                    refHeight,
-                )
-            ])
 
+            const hashrate = await HashrateModel.findOne({
+                where: {
+                    minerId: miner.id,
+                    blockHeight: refHeight
+                },
+                raw: true
+            });
+            const shares = await MinerRepository.getBlockShares(
+                miner.id,
+                refHeight,
+            );
             //     /**
             //    * https://github.com/mochajs/mocha/pull/4112
             //    * BigInt isn't properly supported at the time of this version of mocha/chai
             //    */
 
             // Miner hashrate check
-            // console.dir(minerStats[0])
-            let rate = minerStats[0].rate.toString();
+            let rate = hashrate.rate.toString();
             rate.should.be.eql(miner.sum.toString());
             // Miner shares should be empty
-            minerStats[1].should.be.eql([]);
-            poolRate += BigInt(minerStats[0].rate)
-
+            shares.should.be.eql([]);
+            poolRate += BigInt(rate)
 
         }
         const systemHashrate = await SystemHashrateModel.findByPk(refHeight.toString(), { raw: true });
