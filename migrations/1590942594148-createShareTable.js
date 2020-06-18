@@ -6,7 +6,7 @@ const Migration = {
         return createShareTable(queryInterface, schema, Sequelize);
 
     },
-    
+
     down: (queryInterface, schema, Sequelize) => {
         return queryInterface.sequelize.transaction(async (transaction) => {
             await queryInterface.dropTable({ tableName: 'Shares', schema });
@@ -23,7 +23,7 @@ const createShareTable = (queryInstance, schema, Sequelize) => {
                 primaryKey: true,
                 autoIncrement: true
             },
-        
+
             minerId: {
                 type: Sequelize.UUID,
                 allowNull: false,
@@ -32,32 +32,37 @@ const createShareTable = (queryInstance, schema, Sequelize) => {
                     key: 'id'
                 }
             },
-        
+
             share: {
                 type: Sequelize.INTEGER,
                 allowNull: false
             },
-        
+
             difficulty: {
                 type: Sequelize.BIGINT,
                 allowNull: false,
             },
-            
+
             blockHeight: {
                 type: Sequelize.BIGINT,
                 allowNull: false,
             },
-        
+
             time: {
                 type: Sequelize.DATE,
                 allowNull: false
             },
+            status: {
+                type: Sequelize.SMALLINT,
+                allowNull: false,
+                defaultValue: 0,
+            },
             createdAt: { type: Sequelize.DATE },
             updatedAt: { type: Sequelize.DATE },
             deletedAt: { type: Sequelize.DATE }
-        },{
-            schema: schema
-        }
+        }, {
+        schema: schema
+    }
     );
 };
 

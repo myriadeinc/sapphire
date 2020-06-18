@@ -13,8 +13,11 @@ const ShareModel = DB.sequelize.define('Shares', {
   minerId: {
     type: DB.Sequelize.UUID,
     allowNull: false,
+    references: {
+      model: 'Miners',
+      key: 'id'
+    }
   },
-
   share: {
     type: DB.Sequelize.INTEGER,
     allowNull: false,
@@ -29,11 +32,15 @@ const ShareModel = DB.sequelize.define('Shares', {
     type: DB.Sequelize.BIGINT,
     allowNull: false
   },
-
   time: {
     type: DB.Sequelize.DATE,
-    allowNull: false,
+    allowNull: true,
   },
+  status: {
+    type: DB.Sequelize.SMALLINT,
+    allowNull: false,
+    defaultValue: 0,
+  }
 }, {
   paranoid: true,
 });

@@ -1,20 +1,10 @@
-FROM ubuntu:18.04
-
-# Setup for nvm
-RUN apt-get update && apt-get install -y curl
-RUN mkdir /usr/local/nvm
-ENV NVM_DIR /usr/local/nvm 
-ENV NODE_VERSION v10.17.0
-RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash 
-RUN /bin/bash -c "source $NVM_DIR/nvm.sh && nvm install $NODE_VERSION && nvm use --delete-prefix $NODE_VERSION"
-ENV NODE_PATH $NVM_DIR/versions/node/$NODE_VERSION/lib/node_modules
-ENV PATH      $NVM_DIR/versions/node/$NODE_VERSION/bin:$PATH
+FROM node:12
 
 WORKDIR /usr/src/app
 
 COPY . .
 RUN chmod 777 /usr/src/app
-
+USER node
 EXPOSE 8081
 EXPOSE 9873
 

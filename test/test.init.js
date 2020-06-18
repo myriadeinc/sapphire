@@ -15,6 +15,7 @@ const config = require('nconf')
     .file('environment', { file: `${configPath}/${process.env.NODE_ENV}.json` })
     .file('defaults', { file: `${configPath}/default.json` });
 
+const dataHelper = require('test/helpers/data.helper.js')
 // initialize DB
 const db = require('src/util/db.js');
 
@@ -33,17 +34,18 @@ const should = require('chai')
 // Catch them, and die on them, in a noisy, violent manner.
 process.on('unhandledRejection', (reason, promise) => {
     /* eslint-disable no-console */
-    console.error('Unhandled promise rejection:'); 
+    console.error('Unhandled promise rejection:');
     console.error(reason);
     process.exit(57);
     // If you noticed an exit code of 57, and grepped for it, now you know why.
     /* eslint-enable no-console */
 });
 
+
 after('Cleanup', () => {
     return Promise.all([
         dbReady.then(() => { return db.close(); }),
-     ]);
+    ]);
 });
 
 module.exports = {

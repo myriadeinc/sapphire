@@ -1,35 +1,37 @@
-'use strict';
+"use strict";
 
-const DB = require('src/util/db.js');
+const DB = require("src/util/db.js");
 
-const HashRateModel = DB.sequelize.define('Hashrates', {
-
-  id: {
-    type: DB.Sequelize.BIGINT,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  minerId: {
-    type: DB.Sequelize.UUID,
-    references: {
-      model: 'Miners',
-      key: 'id',
+const HashRateModel = DB.sequelize.define(
+  "Hashrates",
+  {
+    minerId: {
+      type: DB.Sequelize.UUID,
+      primaryKey: true,
+      references: {
+        model: "Miners",
+        key: "id",
+      },
     },
+    blockHeight: {
+      type: DB.Sequelize.BIGINT,
+      allowNull: false,
+      primaryKey: true,
+    },
+
+    time: {
+      type: DB.Sequelize.DATE,
+      defaultValue: DB.Sequelize.NOW,
+    },
+
+    rate: {
+      type: DB.Sequelize.BIGINT,
+      allowNull: false,
+    }
   },
-
-  time: {
-    type: DB.Sequelize.DATE,
-    defaultValue: DB.Sequelize.NOW,
-  },
-
-  rate: {
-    type: DB.Sequelize.BIGINT,
-    allowNull: false,
-  },
-
-}, {
-  paranoid: true,
-});
-
+  {
+    paranoid: true,
+  }
+);
 
 module.exports = HashRateModel;
