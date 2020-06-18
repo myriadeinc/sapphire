@@ -1,11 +1,11 @@
-FROM node:12
-
+FROM node:12.18.0-stretch-slim
 WORKDIR /usr/src/app
-
-COPY . .
-RUN chmod 777 /usr/src/app
-USER node
 EXPOSE 8081
 EXPOSE 9873
+RUN chown -R node:node /usr/src/app
+USER node
 
-CMD node /usr/src/app/src/main.js
+COPY . /usr/src/app
+
+# We don't run "npm start" because we don't want npm to manage the SIGTERM signal
+CMD [ "node", "src/main.js" ]
