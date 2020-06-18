@@ -33,45 +33,18 @@ describe('Miner Repository Unit Tests', () => {
         miner.credits.should.equal('0');
     })
 
-    // it('Should be able to range query miner shares by time', async () => {
+    it('Should insert miner shares', async () => {
+        const refHeight = 100n;
+        const shareData = ShareTestingHelper.generateRandomShare(refHeight);
 
-    //     const miner1_id = MinerTestingHelper.minerId_1;
-    //     const start_time = ShareTestingHelper.time1;
-    //     const end_time = ShareTestingHelper.time3;
-    //     let sampleShares = ShareTestingHelper.sampleShares;
+        let created_share = await MinerRepository.insertShare(shareData);
 
-    //     sampleShares = sampleShares.map(s => {
-    //         return {
-    //             minerId: miner1_id,
-    //             ...s
-    //         }
-    //     });
-    //     await ShareTestingHelper.createSampleShares(sampleShares);
-
-    //     let shares = await MinerRepository.getSharesByTime(miner1_id, start_time, end_time);
-
-    //     shares.should.not.be.null;
-    //     shares.length.should.equal(3);
-
-    //     let sum = _.reduce(shares, (accum, s) => {
-    //         return accum + Number(s.share)
-    //     }, 0);
-    //     sum.should.equal(6);
-    //     await ShareTestingHelper.clearSampleShares();
-    // });
-
-    // it('Should insert miner shares', async () => {
-    //     const refHeight = 100n;
-    //     const shareData = ShareTestingHelper.generateRandomShare(refHeight);
-
-    //     let created_share = await MinerRepository.insertShare(shareData);
-
-    //     created_share.should.not.be.null;
-    //     created_share.blockHeight.should.equal(refHeight.toString());
-    //     created_share.minerId.should.equal(shareData.minerId);
-    //     (created_share.share).toString().should.equal(shareData.share);
-    //     (created_share.difficulty).toString().should.equal(shareData.difficulty);
-    // })
+        created_share.should.not.be.null;
+        created_share.blockHeight.should.equal(refHeight.toString());
+        created_share.minerId.should.equal(shareData.minerId);
+        (created_share.share).toString().should.equal(shareData.share);
+        (created_share.difficulty).toString().should.equal(shareData.difficulty);
+    })
 
     // it('Should be able to fetch miner hashrates', async () => {
 

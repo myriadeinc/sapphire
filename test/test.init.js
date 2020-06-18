@@ -15,7 +15,6 @@ const config = require('nconf')
     .file('environment', { file: `${configPath}/${process.env.NODE_ENV}.json` })
     .file('defaults', { file: `${configPath}/default.json` });
 
-const dataHelper = require('test/helpers/data.helper.js')
 // initialize DB
 const db = require('src/util/db.js');
 
