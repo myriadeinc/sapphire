@@ -96,13 +96,13 @@ const MinerMetricsService = {
 
   processData: async (data) => {
     try {
-      await MinerRepository.insertShare({
-        minerId: data.minerId,
-        share: data.share,
-        difficulty: data.difficulty,
-        blockHeight: data.blockHeight,
-        time: new Date(data.time),
-      });
+      await MinerRepository.insertShare(
+        data.minerId,
+        data.share,
+        data.difficulty,
+        data.blockHeight,
+        new Date(data.time),
+      );
       if (BigInt(MinerMetricsService.currentHeight) < BigInt(data.blockHeight)) {
         const success = await MinerMetricsService.convertSharesToHashrate(currentHeight);
         // Once we successfully convert shares to hashrate and get block info
