@@ -59,6 +59,7 @@ const MinerRepository = {
       difficulty: BigInt(difficulty),
       blockHeight: BigInt(blockHeight),
       time: time,
+      status: 0
     }).catch((err) => {
       logger.error(err);
       throw err;
