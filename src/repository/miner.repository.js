@@ -54,11 +54,11 @@ const MinerRepository = {
 
   insertShare: (minerId, share, difficulty, blockHeight, time) => {
     return ShareModel.create({
-      minerId,
-      share,
-      difficulty,
-      blockHeight,
-      time,
+      minerId: minerId,
+      share: Number(share),
+      difficulty: BigInt(difficulty),
+      blockHeight: BigInt(blockHeight),
+      time: time,
     }).catch((err) => {
       logger.error(err);
       throw err;

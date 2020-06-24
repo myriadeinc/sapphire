@@ -98,7 +98,7 @@ const MinerMetricsService = {
     try {
       await MinerRepository.insertShare(
         data.minerId,
-        data.share,
+        data.shares,
         data.difficulty,
         data.blockHeight,
         new Date(data.time),
