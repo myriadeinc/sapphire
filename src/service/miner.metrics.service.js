@@ -6,7 +6,6 @@ const HashrateModel = require("src/models/hashrate.model.js");
 const ShareModel = require('src/models/share.model.js');
 
 const CreditService = require('src/service/credit.service.js');
-const MoneroApi = require('src/api/monero.api.js')
 const mq = require('src/util/mq.js');
 
 const logger = require('src/util/logger.js').core;
@@ -124,7 +123,7 @@ const MinerMetricsService = {
   },
 
   init: (blockHeight) => {
-    MinerMetricsService.currentHeight = blockHeight;
+    MinerMetricsService.currentHeight = blockHeight || 0;
     return mq.registerConsumer(MinerMetricsService.processData);
   },
 };

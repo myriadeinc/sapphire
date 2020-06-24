@@ -36,6 +36,12 @@ const MoneroApi = {
         return result.block_header.reward;
       }
     );
+  }, getBlockHeight: () => {
+    return send_rpc("get_info", {}).then(
+      (result) => {
+        return result.height;
+      }
+    );
   },
 
   /**
