@@ -58,7 +58,8 @@ const MinerRepository = {
       share: Number(share),
       difficulty: BigInt(difficulty),
       blockHeight: BigInt(blockHeight),
-      time: time,
+      // Add proper time in later build
+      time: new Date(),
       status: 0
     }).catch((err) => {
       logger.error(err);
