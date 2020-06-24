@@ -85,4 +85,19 @@ describe("Miner Metrics Service Functional Tests", () => {
         await ShareTestingHelper.clearSampleShares();
     });
 
+
+    it("Should be able to save miner share", async () => {
+        const minerId = MinerTestingHelper.minerId_1;
+        const data = {
+            minerId: minerId,
+            shares: 1,
+            difficulty: 1234,
+            blockHeight: 0
+        }
+        const result = await MinerMetricsService.processData(data);
+        result.shoud.be.eql(1)
+
+
+    });
+
 });

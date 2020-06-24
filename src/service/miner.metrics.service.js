@@ -96,6 +96,7 @@ const MinerMetricsService = {
 
   processData: async (data) => {
     try {
+      const currMiner = await MinerRepository.getMiner(data.minerId);
       await MinerRepository.insertShare(
         data.minerId,
         data.shares,
@@ -110,14 +111,16 @@ const MinerMetricsService = {
           // Update credit balance for each miner
           await CreditService.hashrateToCredits(currentHeight);
           MinerMetricsService.currentHeight = data.blockHeight;
-          return true;
+          return 3;
         }
-        return false;
+        return 2;
 
       }
     } catch (err) {
       logger.error(err);
+      return 0;
     }
+    return 1;
   },
 
   init: (blockHeight) => {
