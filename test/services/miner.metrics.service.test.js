@@ -95,7 +95,7 @@ describe("Miner Metrics Service Functional Tests", () => {
             blockHeight: 0
         }
         const result = await MinerMetricsService.processData(data);
-        result.shoud.not.be.null;
+        result.should.not.be.null;
 
 
     });
