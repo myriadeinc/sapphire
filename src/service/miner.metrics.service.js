@@ -103,7 +103,8 @@ const MinerMetricsService = {
         data.blockHeight,
         new Date(data.time),
       );
-      if (BigInt(MinerMetricsService.currentHeight) < BigInt(data.blockHeight)) {
+      const currentHeight = BigInt(MinerMetricsService.currentHeight);
+      if (currentHeight < BigInt(data.blockHeight)) {
         const success = await MinerMetricsService.convertSharesToHashrate(currentHeight);
         // Once we successfully convert shares to hashrate and get block info
         if (success) {
@@ -124,6 +125,7 @@ const MinerMetricsService = {
 
   init: (blockHeight) => {
     MinerMetricsService.currentHeight = blockHeight || 0;
+    logger.info(`Miner Metrics initiating with block height ${blockHeight}`)
     return mq.registerConsumer(MinerMetricsService.processData);
   },
 };

@@ -9,7 +9,6 @@ const db = require("src/util/db.js");
 const mq = require("src/util/mq.js");
 const MoneroApi = require('src/api/monero.api.js')
 
-
 let server;
 
 const main = async () => {
@@ -30,9 +29,9 @@ const main = async () => {
   server = app.listen(port, async () => {
     logger.core.info(`Service started on port ${port}`);
 
-    logger.core.info("Registrating MinerMetrics service listener");
-    // Blockheight June 17 2020 8pm EST
-    const blockHeight = await MoneroApi.getBlockHeight();
+    logger.core.info("Registering MinerMetrics service listener");
+    let blockHeight = await MoneroApi.getInfo();
+    blockHeight = blockHeight.height;
     await require("src/service/miner.metrics.service.js").init(blockHeight);
     logger.core.info("MinerMetrics service listener registered");
   });
