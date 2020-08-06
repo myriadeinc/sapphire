@@ -26,7 +26,7 @@ const CreditService = {
             await Promise.all(miners.map(async (miner) => {
                 const credits = CreditService.creditConverter(miner.rate, systemInfo).toString();
                 return MinerModel.increment({
-                    credits: credits
+                    credits
                 }, {
                     where: {
                         id: miner.minerId,

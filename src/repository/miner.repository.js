@@ -62,6 +62,7 @@ const MinerRepository = {
       time: new Date(),
       status: 0
     }).catch((err) => {
+      logger.error("Error inserting share!")
       logger.error(err);
       throw err;
     });

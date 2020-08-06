@@ -21,7 +21,7 @@ const MinerMetricsService = {
     let poolHashrate = 0n;
     // Need to wrap all of it inside a DB transaction so that if one fails, all fails and DB
     //  performs a rollback to initial state. This provides strong guarantuee.
-    await DB.sequelize.transaction(async (t) => {
+    try{ await DB.sequelize.transaction(async (t) => {
       const now = Date.now();
       await Promise.all(
         miners.map(async (miner) => {
@@ -56,18 +56,9 @@ const MinerMetricsService = {
             },
             options
           );
-          await ShareModel.update({ status: 1 }, {
-            where: {
-              blockHeight,
-              status: 0,
-              minerId: miner.id,
-            },
-            transaction: t
-          });
-
-
-        }),
+        })
       );
+      
       // This is not the most accurate method of collecting pool hashrate, but we can always refresh via calling
       if (poolHashrate > 0n) {
         // const reward = MoneroApi.getBlockReward(blockHeight);
@@ -87,15 +78,31 @@ const MinerMetricsService = {
           transaction: t
         });
       }
+      // Update all relevant shares in one batch
+          await ShareModel.update({ status: 1 }, {
+            where: {
+              blockHeight,
+              status: 0
+            },
+            transaction: t
+          });
 
 
-    });
+    });}
+    catch(e){
+      logger.error("Could not update all shares into hashrates")
+      logger.error(e)
+    }
     return poolHashrate == 0n;
   },
 
   processData: async (data) => {
     try {
       const currMiner = await MinerRepository.getMiner(data.minerId);
+      // Skip stale shares
+      if(data.blockHeight < MinerMetricsService.currentHeight){
+        return 0;
+      }
       await MinerRepository.insertShare(
         data.minerId,
         data.shares,
@@ -105,6 +112,7 @@ const MinerMetricsService = {
       );
       const currentHeight = BigInt(MinerMetricsService.currentHeight);
       if (currentHeight < BigInt(data.blockHeight)) {
+        logger.info(`New BlockHeight detected, processing hashrate for blockHeight ${currentHeight}`)
         const success = await MinerMetricsService.convertSharesToHashrate(currentHeight);
         // Once we successfully convert shares to hashrate and get block info
         if (success) {
