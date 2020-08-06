@@ -21,7 +21,6 @@ const main = async () => {
 
   logger.core.info("Initializing messaging queue RabbitMQ");
   await mq.init(config.get("rabbitmq:url"));
-  logger.core.info("Messaging queue initialized");
 
   const port = config.get("port");
   const app = require("./app");

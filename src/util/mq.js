@@ -29,6 +29,7 @@ const MQ = {
       })
       .then((ch) => {
         channel = ch;
+        logger.info("Messaging queue initialized!")
         return true;
       })
       .catch(err => {
@@ -59,7 +60,7 @@ const MQ = {
         return channel.consume(queue, (msg) => {
           if (null !== msg) {
             channel.ack(msg);
-            logger.info(`Consuming message: ${msg.content.toString()}\n from queue ${queue}`);
+            // logger.info(`Consuming message: ${msg.content.toString()}\n from queue ${queue}`);
             return cb(JSON.parse(msg.content.toString()));
           }
         });

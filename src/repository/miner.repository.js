@@ -107,6 +107,17 @@ const MinerRepository = {
   },
   getRecentHashrates: (minerId, nBlocks) => {
     return HashRateModel.findAll({
+      attributes: ["blockHeight","time","rate"],
+      raw: true,
+      where: {
+        minerId: minerId,
+      },
+      limit: nBlocks,
+      order: ['blockHeight']
+    })
+  },
+  getRecentShares: (minerId, nBlocks) => {
+    return HashRateModel.findAll({
       attributes: [],
       raw: true,
       where: {
@@ -116,6 +127,7 @@ const MinerRepository = {
       order: ['blockHeight']
     })
   },
+
 
   getMiner: (minerId) => {
     return MinerModel.findOrCreate({

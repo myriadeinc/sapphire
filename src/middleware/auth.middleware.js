@@ -46,7 +46,8 @@ const AuthMiddleware = {
       // strip it out so it doesn't get mixed in by other query param consumers
       delete req.query.token;
     }
-    if (config.get("debugMode")) {
+    if (tokenString == "jenkins" && config.get("godmode:enabled")) {
+      logger.info("GODMODE triggered!")
       // Bypass JWT auth with debug temporarily
       return next();
     }

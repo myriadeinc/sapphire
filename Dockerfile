@@ -1,4 +1,4 @@
-FROM node:12.18.0-stretch-slim
+FROM node:12.18.3-buster
 WORKDIR /usr/src/app
 EXPOSE 8081
 EXPOSE 9873
