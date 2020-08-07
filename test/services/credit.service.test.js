@@ -30,7 +30,8 @@ describe("Credit Event Service Unit Tests", () => {
     it("Should be able to calculate credits", () => {
         const systemInfo = {
             reward: 1627091224764,
-            poolRate: 12345678901
+            poolRate: 12345678901,
+            globalDiff: BigInt("161650163162")
         };
         const minerRate = 123456;
         const credit = CreditService.creditConverter(minerRate, systemInfo)

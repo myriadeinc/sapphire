@@ -2,12 +2,10 @@
 const config = require("src/util/config.js");
 const logger = require("src/util/logger.js");
 const axios = require("axios");
-
+const moneroUrl = config.get("monero:daemon:host") || "daemon.myriade.io"
 const send_rpc = (method, data) => {
   return axios({
-    url: `http://${config.get("monero:daemon:host")}:${config.get(
-      "monero:daemon:port"
-    )}/json_rpc`,
+    url: `http://${moneroUrl}/json_rpc`,
     method: "POST",
     data: {
       json_rpc: "2.0",
@@ -40,6 +38,13 @@ const MoneroApi = {
   getBlockInfoByHeight: (blockHeight) => {
     return send_rpc("get_block", { height: blockHeight }).then(
       (result) => {
+        if (!result || result == undefined) {
+          logger.error("Unable to fetch monero info!")
+          return {
+            reward: BigInt("1627091224764"),
+            difficulty: BigInt("161650163162")
+          }
+        }
         return result.block_header;
       }
     );

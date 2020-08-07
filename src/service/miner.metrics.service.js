@@ -18,7 +18,7 @@ const MinerMetricsService = {
     locked: false
   },
 
-  convertSharesToHashrate: async (blockHeight) => {
+  convertSharesToHashrate: async (blockHeight, forced = false) => {
 
     // Get all the shares for a given block, then we convert them to approx. hashrate (which is [total difficulty * share count] / 120s)
     const miners = await MinerRepository.getAllMiners();
@@ -65,15 +65,16 @@ const MinerMetricsService = {
         );
 
         // This is not the most accurate method of collecting pool hashrate, but we can always refresh via calling
-        if (poolHashrate > 0n) {
+        if (poolHashrate > 0n || forced) {
           const blockInfo = await MoneroApi.getBlockInfoByHeight(blockHeight);
-           logger.info(`Block info: reward is ${blockInfo.reward}______diff is ${blockInfo.difficulty}`);
+          logger.info(`Block info: reward is ${blockInfo.reward}______diff is ${blockInfo.difficulty}`);
           // TODO: add proper emission calculation
-          const reward = BigInt("1627091224764");
-        // Fetch globalDiff and reward from monero api
-        const globalDiff = BigInt("161650163162")
 
-         
+          const reward = BigInt(blockInfo.reward)
+          // Fetch globalDiff and reward from monero api
+
+          const globalDiff = BigInt(blockInfo.difficulty)
+
           await SystemHashrateModel.upsert({
             blockHeight,
             poolRate: poolHashrate,

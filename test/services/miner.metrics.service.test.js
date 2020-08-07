@@ -45,7 +45,7 @@ describe("Miner Metrics Service Functional Tests", () => {
 
     it("Should be able to calculate proper pool and miner hashrate", async () => {
 
-        await MinerMetricsService.convertSharesToHashrate(refHeight);
+        await MinerMetricsService.convertSharesToHashrate(refHeight, true);
 
 
         let poolRate = 0n;
