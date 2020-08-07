@@ -4,7 +4,7 @@ const axios = require('axios');
 const MinerRepository = require('src/repository/miner.repository.js');
 const SystemHashrateModel = require('src/models/system.hashrate.model.js');
 const MinerModel = require("src/models/miner.model.js");
-
+const MoneroApi = require("src/api/monero.api.js");
 const logger = require('src/util/logger.js').core;
 const DB = require("src/util/db.js");
 
@@ -14,8 +14,9 @@ const CreditService = {
         const blockReward = await MoneroApi.getBlock(blockHeight).reward;
         return blockReward > 0 ? blockReward : 0;
     },
+    
     // For latest network difficulty
-    getNetworkDifficulty: () => {
+    getNetworkDifficulty: async () => {
         return 0;
     },
     hashrateToCredits: async (blockHeight) => {
@@ -52,7 +53,7 @@ const CreditService = {
                 break;
             // useMyriade is default for now, will change in the future
             default:
-                finalCredit = (BigInt(systemInfo.reward) * BigInt(minerRate) * 9n) / (BigInt(systemInfo.poolRate) * 1000n)
+                finalCredit = (BigInt(systemInfo.reward) * BigInt(minerRate) * 9n) / (BigInt(systemInfo.globalDiff / 120) * 1000n)
         }
         return finalCredit;
     }
