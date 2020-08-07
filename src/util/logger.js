@@ -29,5 +29,6 @@ module.exports = {
   db: logger.child({ component: 'db' }),
   mq: logger.child({ component: 'mq' }),
   job: logger.child({ component: 'job' }),
+  xmr: logger.child({ component: 'xmr' }),
   minerRepository: logger.child({ component: 'minerRepository' }),
 };

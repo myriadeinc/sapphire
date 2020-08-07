@@ -1,6 +1,6 @@
 "use strict";
 const config = require("src/util/config.js");
-const logger = require("src/util/logger.js");
+const logger = require("src/util/logger.js").xmr;
 const axios = require("axios");
 const moneroUrl = config.get("monero:daemon:host") || "daemon.myriade.io"
 const send_rpc = (method, data) => {

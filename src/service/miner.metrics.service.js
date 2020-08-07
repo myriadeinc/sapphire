@@ -67,7 +67,7 @@ const MinerMetricsService = {
         // This is not the most accurate method of collecting pool hashrate, but we can always refresh via calling
         if (poolHashrate > 0n || forced) {
           const blockInfo = await MoneroApi.getBlockInfoByHeight(blockHeight);
-          logger.info(`Block info: reward is ${blockInfo.reward}______diff is ${blockInfo.difficulty}`);
+          logger.info(`Block info: reward is ${blockInfo.reward} \t diff is ${blockInfo.difficulty}`);
           // TODO: add proper emission calculation
 
           const reward = BigInt(blockInfo.reward)
