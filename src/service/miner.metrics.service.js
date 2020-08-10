@@ -27,9 +27,7 @@ const MinerMetricsService = {
     let poolHashrate = 0n;
     const minerStats = await Promise.all(miners.map(async (miner) => {
             const minerShares = await MinerRepository.getBlockShares(miner.id,blockHeight);
-            // Stop when no shares exist
             if (minerShares.length == 0) return { id: miner.id, rate: 0n }
-            // Hashrate must be saved as BigInt since difficulty can later grow to large numbers
             const minerHashrate = minerShares.reduce((base, share) => {
               return base + (BigInt(share.share) * BigInt(share.difficulty));
             }, 0n) / 120n;
@@ -41,10 +39,7 @@ const MinerMetricsService = {
     // Need to wrap all of it inside a DB transaction so that if one fails, all fails and DB
     //  performs a rollback to initial state. This provides strong guarantuee.
     try {
-     
       await DB.sequelize.transaction(async (t) => {
-        if(poolHashrate <= 0n) throw new Error(`Pool Hashrate too low at ${poolHashrate}`)
-
         // This is not the most accurate method of collecting pool hashrate, but we can always refresh via calling
         const blockInfo = await MoneroApi.getBlockInfoByHeight(blockHeight.toString(), forceCalc)
         const reward = blockInfo.reward;
@@ -90,8 +85,9 @@ const MinerMetricsService = {
     catch (e) {
       logger.error("Could not update all shares into hashrates")
       logger.error(e)
+      return false;
     }
-    return poolHashrate == 0n;
+    return true;
   },
 
   processData: async (data, forceCalc = false) => {
