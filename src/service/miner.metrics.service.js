@@ -25,35 +25,28 @@ const MinerMetricsService = {
     const miners = await MinerRepository.getAllMiners();
     const time = Date.now();
     let poolHashrate = 0n;
-    // Need to wrap all of it inside a DB transaction so that if one fails, all fails and DB
-    //  performs a rollback to initial state. This provides strong guarantuee.
-    try {
-      const minerStats = await Promise.all(miners.map(async (miner) => {
+    const minerStats = await Promise.all(miners.map(async (miner) => {
             const minerShares = await MinerRepository.getBlockShares(miner.id,blockHeight);
             // Stop when no shares exist
-            if (minerShares.length == 0) {
-              return {
-                id: miner.id,
-                // No shares, no hashrate
-                rate: 0n
-              }
-            }
+            if (minerShares.length == 0) return { id: miner.id, rate: 0n }
             // Hashrate must be saved as BigInt since difficulty can later grow to large numbers
             const minerHashrate = minerShares.reduce((base, share) => {
               return base + (BigInt(share.share) * BigInt(share.difficulty));
             }, 0n) / 120n;
             poolHashrate+=minerHashrate;
-            return {
-              id: miner.id,
-              rate: minerHashrate}
+            return { id: miner.id, rate: minerHashrate}
           })
-      );
+    )
+    logger.info(`Pool Hashrate for block ${blockHeight} at ${poolHashrate}`)
+    // Need to wrap all of it inside a DB transaction so that if one fails, all fails and DB
+    //  performs a rollback to initial state. This provides strong guarantuee.
+    try {
+     
       await DB.sequelize.transaction(async (t) => {
-        if(poolHashrate <= 0n) throw new Error("Pool hashrate not updated!")
+        if(poolHashrate <= 0n) throw new Error(`Pool Hashrate too low at ${poolHashrate}`)
 
         // This is not the most accurate method of collecting pool hashrate, but we can always refresh via calling
         const blockInfo = await MoneroApi.getBlockInfoByHeight(blockHeight.toString(), forceCalc)
-        // TODO: add proper emission calculation
         const reward = blockInfo.reward;
         const globalDiff = blockInfo.difficulty;
         logger.info(`Block info: reward is ${reward} \t diff is ${globalDiff}`);
@@ -74,8 +67,7 @@ const MinerMetricsService = {
               }
           })));
 
-
-          await SystemHashrateModel.upsert({
+        await SystemHashrateModel.upsert({
             blockHeight,
             poolRate: poolHashrate,
             reward,
@@ -86,7 +78,6 @@ const MinerMetricsService = {
             },
             transaction: t
           });
-        // Update all relevant shares in one batch
         await ShareModel.update({ status: 1 }, {
           where: {
             blockHeight,
