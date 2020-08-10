@@ -3,6 +3,8 @@ const config = require("src/util/config.js");
 const logger = require("src/util/logger.js").xmr;
 const axios = require("axios");
 const moneroUrl = config.get("monero:daemon:host") || "daemon.myriade.io"
+const   DEFAULT_REWARD = "1627091224764";
+const  DEFAULT_DIFF = "161650163162";
 const send_rpc = (method, data) => {
   return axios({
     url: `http://${moneroUrl}/json_rpc`,
@@ -15,10 +17,17 @@ const send_rpc = (method, data) => {
     },
   }).then(({ data }) => {
     return data.result;
+  }).catch(e => {
+    logger.error(e) 
+    return false
   });
 };
 let blockHeight = 1;
 const MoneroApi = {
+
+  DEFAULT_BLOCK: {
+    reward: DEFAULT_REWARD, difficulty: DEFAULT_DIFF
+  },
   getCurrentBlockHeight: () => {
     return blockHeight;
     // return send_rpc("get_height", {}).height;
@@ -35,19 +44,18 @@ const MoneroApi = {
       }
     );
   },
-  getBlockInfoByHeight: (blockHeight) => {
-    return send_rpc("get_block", { height: blockHeight }).then(
-      (result) => {
-        if (!result || result == undefined) {
-          logger.error("Unable to fetch monero info!")
-          return {
-            reward: BigInt("1627091224764"),
-            difficulty: BigInt("161650163162")
-          }
-        }
+  getBlockInfoByHeight: (blockHeight, forceCalc = false) => {
+    if(forceCalc) return MoneroApi.DEFAULT_BLOCK
+    return send_rpc("get_block", { height: blockHeight })
+    .then(result => {
+        if (!result || result == undefined) throw new Error('No response!')
         return result.block_header;
-      }
-    );
+    })
+    .catch(e => {
+      logger.error("Unable to fetch monero info!")
+      logger.error(e)
+      return MoneroApi.DEFAULT_BLOCK
+    })
   },
   getInfo: () => {
     return send_rpc("get_info", {})

@@ -17,7 +17,7 @@ function getRandomInt(min, max) {
 /**
  * Store some state here because async behavior
  */
-const refHeight = getRandomInt(123456, 12345678);
+const refHeight = getRandomInt(123456, 2160959);
 const miners = MinerTestingHelper.sampleMiners;
 let minerData = [];
 
@@ -45,9 +45,8 @@ describe("Miner Metrics Service Functional Tests", () => {
 
     it("Should be able to calculate proper pool and miner hashrate", async () => {
 
-        await MinerMetricsService.convertSharesToHashrate(refHeight, true);
-
-
+        const forceCalc = true;
+        await MinerMetricsService.convertSharesToHashrate(refHeight, forceCalc);
         let poolRate = 0n;
         for (const miner of minerData) {
 

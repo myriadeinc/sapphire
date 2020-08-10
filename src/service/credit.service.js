@@ -15,16 +15,9 @@ const CreditService = {
         const miners = await MinerRepository.getAllMinerHashrates(blockHeight);
         // Calculate miner credit based on formula, then update credit, wrap in transaction to ensure all miners receive their credits
         await DB.sequelize.transaction(async (t) => {
-            await Promise.all(miners.map(async (miner) => {
+            await Promise.all(miners.map(async miner => {
                 const credits = CreditService.creditConverter(miner.rate, systemInfo).toString();
-                return MinerModel.increment({
-                    credits
-                }, {
-                    where: {
-                        id: miner.minerId,
-                    },
-                    transaction: t
-                })
+                return MinerRepository.grantMinerCredits(miner.minerId, credits, t)
             }))
         })
         return true;

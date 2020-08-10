@@ -42,9 +42,6 @@ MinerModel.hasMany(HashRateModel, { foreignKey: "minerId", targetKey: "id" });
 
 MinerModel.hasMany(ShareModel, { foreign_key: "minerId", targetKey: "id" });
 
-MinerModel.hasMany(CreditEventModel, {
-  foreign_key: "minerId",
-  targetKey: "id",
-});
+MinerModel.hasMany(CreditEventModel, { foreign_key: "minerId", targetKey: "id" });
 
 module.exports = MinerModel;

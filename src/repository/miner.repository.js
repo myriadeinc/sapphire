@@ -168,13 +168,14 @@ const MinerRepository = {
     return BigInt(miner.credits) - BigInt(amount);
   },
 
-  grantMinerCredits: (minerId, amount) => {
+  grantMinerCredits: (minerId, amount, transaction = null) => {
     return MinerModel.increment({
       credits: amount
     }, {
       where: {
         id: minerId,
       },
+      transaction
     }).catch((err) => {
       logger.error(err);
       throw err;

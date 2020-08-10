@@ -47,6 +47,7 @@ const SharesHelper = {
     let minerData = [];
     // We use for here to force the await to resolve
     for (const miner of miners) {
+      await MinerRepository.getMiner(miner.id)
       const shares = SharesHelper.getRandomShares(refHeight);
       let sum = 0n;
       await Promise.all(
