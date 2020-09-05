@@ -59,3 +59,28 @@ Gets requests from emerald and updates the databse. Rabbitmq is set up on Sapphi
     ├── Tests...
 
 ```
+
+
+
+### Credit Event Content
+
+While Credit Event Content uses no specified schema, there are some fields/structures that we can expect or at least enforce:
+
+```{
+id: The id of the event, unique
+public: {
+    This is the only data that should be shown in the client visually
+    title: The expected title of the event
+    description: Further rules explained here
+    entryPrice: The initial entry price (in myriade credits)
+    prizeAmount: The prize amount (in myriade credits)
+    rules: To be determined per structure, is not exposed visually to client
+    expiry: When the event ends
+}
+private: {
+    The private data is currently availble de facto, but in the future will be provided on a per-event basis. Currently we have it here for clarity's sake
+    usdRate: The exchange rate from myriade credits to USD
+    changePriceFactor: Changes the entry price by a specific factor
+}
+
+}```

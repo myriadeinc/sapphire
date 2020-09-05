@@ -15,9 +15,13 @@ const EventCmsModel = DB.sequelize.define(
       type: DB.Sequelize.JSONB,
     },
 
-    tag: {
+    tags: {
       type: DB.Sequelize.STRING,
       allowNull: false,
+    },
+    status: {
+      type: DB.Sequelize.INTEGER,
+      defaultValue: 0
     }
   },
   {
