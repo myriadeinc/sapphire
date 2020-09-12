@@ -4,11 +4,8 @@ const _ = require("lodash");
 
 const testing = require("../test.init.js");
 const MinerTestingHelper = require("test/helpers/miner.helper.js");
-const ShareTestingHelper = require("test/helpers/shares.helper.js");
+const CreditEventService = require("src/service/credit.event.service.js");
 const MinerRepository = require("src/repository/miner.repository.js");
-
-const HashrateModel = require("src/models/hashrate.model.js");
-const ShareModel = require("src/models/share.model.js");
 
 
 require("chai")
@@ -30,14 +27,18 @@ describe("Credit Event Service Unit Tests", () => {
         await MinerTestingHelper.clearAllMiners();
     });
 
-    //   it("Should be able to lock a miners funds", async () => {
-    //     const miner = null;
-    //     const data = {};
-    //     await CreditEventService.create(miner, data);
-    //     const funds = await CreditEventModel.findById(miner);
+    it("Should be able to lock a miners funds", async () => {
+        const minerId = MinerTestingHelper.minerId_1;
+        await MinerRepository.grantMinerCredits(minerId, 10000);
+        const amount = 1000;
+        const lockType = 1;
 
-    //     funds.should.equal(data);
-    //   });
+        await CreditEventService.create(minerId, amount, lockType);
+        const miner = await MinerRepository.getMinerDataById(minerId);
+        const newBalance = miner.credits;
+
+        newBalance.should.equal(9000);
+    });
 
     //   it("Should be able to fully release funds", async () => {
     //     // miner2 add lock funds equal to monero balance
