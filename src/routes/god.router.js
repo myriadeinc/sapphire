@@ -9,7 +9,7 @@ const logger = require("src/util/logger.js").core;
 
 router.get("/participants/:id", AuthMiddleware.authenticateGodMode, async (req, res) => {
     const eventId = req.params.id;
-    const participantIds = await CreditEventService.getParticipants(eventId)
+    const participantIds = await CreditEventService.getUniqueParticipants(eventId)
     return res.status(200).send({
         participantIds
     })
