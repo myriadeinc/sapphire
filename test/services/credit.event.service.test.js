@@ -61,8 +61,8 @@ describe.only("Credit Event Service Unit Tests", () => {
         await CreditEventService.create(MinerTestingHelper.minerId_1, 10, 1, eventInfo.id)
         // Fetch all miners, duplicate ones should be combined into one entry
         const participants = await CreditEventService.getUniqueParticipants(eventInfo.id)
-        const expected = MinerTestingHelper.sampleMiners.map(miner => miner.id.toString())
-        participants.should.eql(expected)
+        const expected = MinerTestingHelper.sampleMiners.map(miner => miner.id.toString()).sort()
+        participants.sort().should.eql(expected)
 
 
     })
