@@ -108,7 +108,7 @@ const MinerRepository = {
   },
   getRecentHashrates: (minerId, nBlocks) => {
     return HashRateModel.findAll({
-      attributes: ["blockHeight","time","rate"],
+      attributes: ["blockHeight", "time", "rate"],
       raw: true,
       where: {
         minerId: minerId,
@@ -148,7 +148,7 @@ const MinerRepository = {
       });
   },
 
-  // Dangerous! We can modify the miner account balance this way
+  // Dangerous! We can modify the miner account balance this way, add a filter method beforehand
   updateMiner: (minerId, data) => {
     return MinerModel.update({
       ...data
@@ -163,14 +163,28 @@ const MinerRepository = {
       });
   },
 
+  updateMinerFunds: (minerId, balance) => {
+    return MinerModel.update({
+      credits: balance
+    },
+      {
+        where: {
+          id: minerId,
+        },
+      }).catch((err) => {
+        logger.error(err);
+        throw err;
+      });
+  },
+
   minerCheckFunds: async (minerId, amount) => {
-    const miner = MinerModel.findByPk(minerId, { raw: true });
-    return BigInt(miner.credits) - BigInt(amount);
+    const miner = await MinerModel.findByPk(minerId, { raw: true })
+    return BigInt(miner.credits || 0) - BigInt(amount);
   },
 
   grantMinerCredits: (minerId, amount, transaction = null) => {
     return MinerModel.increment({
-      credits: amount
+      credits: amount.toString()
     }, {
       where: {
         id: minerId,

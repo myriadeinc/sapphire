@@ -20,7 +20,7 @@ const CreditEventService = {
   depositFunds: async (minerId) => {
     return true;
   },
-  create: async (minerId, amount, lockType, comments = null) => {
+  create: async (minerId, amount, lockType, contentId, comments = "autoTriggered") => {
     const balance = await MinerRepository.minerCheckFunds(minerId, amount);
     if (balance < 0) {
       throw new Error("Insufficient funds!")
@@ -35,12 +35,29 @@ const CreditEventService = {
           amount,
           lockType,
           eventTime: new Date(),
+          contentId,
           comments,
-        });
-      },
-      { transaction: t }
-    );
+        }, { transaction: t });
+      })
   },
+  closeEvent: async (eventId, winnerId) => {
+    await CreditEventModel.update({ status: 1 }, { where: { id: eventId } })
+    await CreditEventModel.update({ status: 10 }, { where: { minerId: winnerId } })
+    return {}
+  },
+  grantMinerCredits: (minerId, amount) => MinerRepository.grantMinerCredits(minerId, amount),
+  getParticipants: (eventId) => CreditEventModel.findAll({
+    attributes: ["minerId"],
+    where: { contentId: eventId },
+    raw: true
+  }),
+  getUniqueParticipants: async (eventId) => {
+    let participants = await CreditEventService.getParticipants(eventId);
+    participants = participants.map(participant => participant.minerId.toString())
+    return [...new Set(participants)]
+  },
+
+
   getCreditEvents: (minerId, status = 0) => CreditEventModel.find({
     where: {
       minerId,

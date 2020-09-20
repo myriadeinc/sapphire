@@ -31,6 +31,19 @@ const AuthMiddleware = {
       res.sendStatus(403);
     }
   },
+  authenticateGodMode: (req, res, next) => {
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.split(" ")[0] === "GodMode" &&
+      config.get("service:god_mode") ===
+      req.headers.authorization.split(" ")[1]
+    ) {
+      next();
+    } else {
+      logger.error(`Failed login attempt for god mode`);
+      res.sendStatus(403);
+    }
+  },
 
   validateMinerId: (req, res, next) => {
     let tokenString;
