@@ -9,7 +9,7 @@ const decodeAndVerify = (token) => {
   return new Promise((resolve, reject) => {
     let decodedToken;
     try {
-      decodedToken = jwt.verify(token, config.get("diamond:public_key"), { algorithms: ['RS256'] });
+      decodedToken = jwt.verify(token, config.get("diamond:public_key").trim(), { algorithms: ['RS256'] });
     } catch (err) {
       return reject(err);
     }
