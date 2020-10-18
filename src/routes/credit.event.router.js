@@ -39,7 +39,7 @@ router.post(
   }
 )
 
-router.get("/active", AuthMiddleware.validateMinerId, async (req, res) => {
+router.get("/allEvents", AuthMiddleware.validateMinerId, async (req, res) => {
   try {
     // const entries = await CreditEventService.getCreditEvents(req.body.minerId);
     const eventTime = Date.now();
@@ -50,22 +50,24 @@ router.get("/active", AuthMiddleware.validateMinerId, async (req, res) => {
           amount: 100,
           lockType: 99,
           eventTime,
-          contentId: 12
-
+          contentId: 12,
+          status: "WON"
         },
         {
           id: 2,
           amount: 900,
           lockType: 98,
           eventTime,
-          contentId: 47
+          contentId: 47,
+          status: "PENDING"
         },
         {
           id: 3,
           amount: 400,
           lockType: 97,
           eventTime,
-          contentId: 87
+          contentId: 87,
+          status: "LOST"
         }
       ]
     };
@@ -76,59 +78,5 @@ router.get("/active", AuthMiddleware.validateMinerId, async (req, res) => {
     return res.status(500).send('ERROR FETCHING CREDIT EVENTS')
   }
 })
-router.get("/won", AuthMiddleware.validateMinerId, async (req, res) => {
-  try {
-    // const entries = await CreditEventService.getCreditEvents(req.body.minerId, 1);
-    const eventTime = Date.now();
-    const entries = {
-      "entries": [
-        {
-          id: 11,
-          amount: 100,
-          lockType: 99,
-          eventTime,
-          contentId: 120
-        },
-        {
-          id: 12,
-          amount: 900,
-          lockType: 98,
-          eventTime,
-          contentId: 470
-        },
-        {
-          id: 13,
-          amount: 400,
-          lockType: 97,
-          eventTime,
-          contentId: 870
-        }
-      ]
-    };
-    return res.status(200).send(entries)
-  }
-  catch (e) {
-    logger.error(e)
-    return res.status(500).send('ERROR FETCHING CREDIT EVENTS')
-  }
-})
-
-// router.post(
-//   "/check",
-//   [
-//     // username must be an email
-//     check("username").isEmail(),
-//     // password must be at least 5 chars long
-//     check("password").isLength({ min: 5 }),
-//   ],
-//   async (req, res) => {
-//     const minerId = req.body.variables.minerId;
-//     if (!req.body.amount) {
-//       return res.status(400).send("Amount not provided");
-//     }
-//     FundsService.lockFunds(req.body.amount);
-//     return res.status(200).send("OK");
-//   }
-// );
 
 module.exports = router;

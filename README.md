@@ -84,3 +84,10 @@ private: {
 }
 
 }```
+
+  
+### Integer Mapping for Specific Properties
+
+`lockType -> `The type of event that the credit event is linked to. For example, having a `lockType` of `1` would signify a raffle ticket, however the classification is yet to be fully specified at this time.
+
+ 
