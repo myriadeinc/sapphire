@@ -16,17 +16,29 @@ router.get("/hashrates",
     AuthMiddleware.validateMinerId,
     async (req, res) => {
 
-        const minerId = req.body.minerId;
-        const rawRates = await MinerRepository.getRecentHashrates(minerId, 720);
-
-        return res.status(200).send(rawRates);
+        try {
+            const minerId = req.body.minerId;
+            const rawRates = await MinerRepository.getRecentHashrates(minerId, 720);
+            return res.status(200).send(rawRates);
+        }
+        catch (e) {
+            return res.status(500).send(`Unable to fetch minerId: ${req.body.minerId}`)
+        }
     });
 
 router.get("/credit", async (req, res) => {
     const minerId = req.body.minerId;
-    let minerInfo = await MinerRepository.getMinerDataById(minerId);
-    minerInfo = minerInfo.credits
-    return res.status(200).send(minerInfo);
+    let minerInfo;
+    try {
+        minerInfo = await MinerRepository.getMinerDataById(minerId);
+        minerInfo = minerInfo.credits
+        return res.status(200).send(minerInfo);
+    }
+    catch (e) {
+        return res.status(500).send(`Unable to fetch minerId: ${minerId}`)
+    }
+
+
 });
 
 router.get("/fakeData", async (req, res) => {
