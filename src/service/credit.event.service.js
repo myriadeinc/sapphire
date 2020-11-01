@@ -23,7 +23,7 @@ const CreditEventService = {
   create: async (minerId, amount, lockType, contentId, comments = "autoTriggered") => {
     const balance = await MinerRepository.minerCheckFunds(minerId, amount);
     if (balance < 0) {
-      throw new Error("Insufficient funds!")
+      return false;
     }
     // if balance >=0
     await DB.sequelize.transaction(
@@ -39,6 +39,7 @@ const CreditEventService = {
           comments,
         }, { transaction: t });
       })
+    return true;
   },
   closeEvent: async (eventId, winnerId) => {
     await CreditEventModel.update({ status: 1 }, { where: { id: eventId } })

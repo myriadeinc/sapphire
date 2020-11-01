@@ -22,8 +22,10 @@ router.post(
     try {
       const minerId = req.body.minerId
       const amount = req.body.amount
-      if (!mockMode) {
-        const newCredits = CreditService.create(minerId, amount, req.body.lockType, req.body.comments);
+
+      const txSucceeds = CreditService.create(minerId, amount, req.body.lockType, req.body.comments)
+      if (!txSucceeds) {
+        return res.status(406).send();
       }
 
       const reply = {
@@ -50,6 +52,7 @@ router.get("/allEvents", AuthMiddleware.validateMinerId, async (req, res) => {
           amount: 100,
           lockType: 99,
           eventTime,
+          "purchaseTime": 1603328809963,
           contentId: 12,
           status: "WON"
         },
@@ -58,6 +61,7 @@ router.get("/allEvents", AuthMiddleware.validateMinerId, async (req, res) => {
           amount: 900,
           lockType: 98,
           eventTime,
+          "purchaseTime": 1503328809963,
           contentId: 47,
           status: "PENDING"
         },
@@ -66,6 +70,7 @@ router.get("/allEvents", AuthMiddleware.validateMinerId, async (req, res) => {
           amount: 400,
           lockType: 97,
           eventTime,
+          "purchaseTime": 1603328109963,
           contentId: 87,
           status: "LOST"
         }

@@ -31,8 +31,8 @@ router.get("/credit", async (req, res) => {
     let minerInfo;
     try {
         minerInfo = await MinerRepository.getMinerDataById(minerId);
-        minerInfo = minerInfo.credits
-        return res.status(200).send(minerInfo);
+
+        return res.status(200).send({ credits: minerInfo.credits });
     }
     catch (e) {
         return res.status(500).send(`Unable to fetch minerId: ${minerId}`)
