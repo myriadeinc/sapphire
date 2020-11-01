@@ -25,7 +25,9 @@ router.post(
 
       const txSucceeds = CreditService.create(minerId, amount, req.body.lockType, req.body.comments)
       if (!txSucceeds) {
-        return res.status(406).send();
+        return res.status(406).send({
+          error: `Insufficient funds for purchase amount ${amount}`
+        });
       }
 
       const reply = {
