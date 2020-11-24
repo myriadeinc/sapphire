@@ -14,7 +14,7 @@ require("chai")
     .use(require("chai-string"))
     .should();
 
-describe.only("Credit Event Service Unit Tests", () => {
+describe("Credit Event Service Unit Tests", () => {
     before("Await DB", () => {
         return testing.dbReady;
     });
@@ -63,8 +63,6 @@ describe.only("Credit Event Service Unit Tests", () => {
         const participants = await CreditEventService.getUniqueParticipants(eventInfo.id)
         const expected = MinerTestingHelper.sampleMiners.map(miner => miner.id.toString()).sort()
         participants.sort().should.eql(expected)
-
-
     })
 
 });
