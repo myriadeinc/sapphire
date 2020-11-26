@@ -20,6 +20,7 @@ const CreditEventService = {
   depositFunds: async (minerId) => {
     return true;
   },
+
   create: async (minerId, amount, lockType, contentId, comments = "autoTriggered") => {
     const balance = await MinerRepository.minerCheckFunds(minerId, amount);
     if (balance < 0) {
@@ -41,17 +42,21 @@ const CreditEventService = {
       })
     return true;
   },
+
   closeEvent: async (eventId, winnerId) => {
     await CreditEventModel.update({ status: 1 }, { where: { id: eventId } })
     await CreditEventModel.update({ status: 10 }, { where: { minerId: winnerId } })
     return {}
   },
+  
   grantMinerCredits: (minerId, amount) => MinerRepository.grantMinerCredits(minerId, amount),
+  
   getParticipants: (eventId) => CreditEventModel.findAll({
     attributes: ["minerId"],
     where: { contentId: eventId },
     raw: true
   }),
+
   getUniqueParticipants: async (eventId) => {
     let participants = await CreditEventService.getParticipants(eventId);
     participants = participants.map(participant => participant.minerId.toString())
@@ -59,14 +64,15 @@ const CreditEventService = {
   },
 
 
-  getCreditEvents: (minerId, status = 0) => CreditEventModel.find({
+  getCreditEvents: (minerId) => CreditEventModel.findAll({
+    attributes: ["id", "amount", "lockType", "eventTime","contentId", "status"],
     where: {
-      minerId,
-      status
+      minerId
     }
   }),
 
   createEvent: async (data, tags = "default") => EventModel.create({ data, tags, status: 1 }),
+  
   getActiveContent: () => EventModel.findAll({ where: { status: 1 } }),
 
   keyReference: {

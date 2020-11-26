@@ -10,7 +10,6 @@ const CreditEventModel = DB.sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
-
     minerId: {
       type: DB.Sequelize.UUID,
       allowNull: false,
@@ -19,22 +18,18 @@ const CreditEventModel = DB.sequelize.define(
         key: "id",
       },
     },
-
     amount: {
       type: DB.Sequelize.BIGINT,
       allowNull: false,
     },
-
     lockType: {
       type: DB.Sequelize.INTEGER,
       allowNull: false,
     },
-
     status: {
       type: DB.Sequelize.SMALLINT,
       allowNull: false,
     },
-
     eventTime: {
       type: DB.Sequelize.DATE,
       allowNull: false,
@@ -47,7 +42,6 @@ const CreditEventModel = DB.sequelize.define(
         key: "id"
       }
     },
-
     comments: {
       type: DB.Sequelize.STRING,
       allowNull: true,
