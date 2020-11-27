@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const AuthMiddleware = require("src/middleware/auth.middleware.js");
 const MinerRepository = require("src/repository/miner.repository.js");
 const HashRateModel = require("src/models/hashrate.model.js");
+const logger = require("src/util/logger.js").db;
 
 router.use(AuthMiddleware.validateMinerId);
 
@@ -15,27 +16,26 @@ router.use(AuthMiddleware.validateMinerId);
 router.get("/hashrates",
     AuthMiddleware.validateMinerId,
     async (req, res) => {
-
+        const minerId = req.body.minerId;
         try {
-            const minerId = req.body.minerId;
             const rawRates = await MinerRepository.getRecentHashrates(minerId, 720);
             return res.status(200).send(rawRates);
         }
         catch (e) {
-            return res.status(500).send(`Unable to fetch minerId: ${req.body.minerId}`)
+            logger.error(e);
+            return res.status(500).send({ error: `Unable to fetch minerId: ${minerId}`, code: 500 });
         }
     });
 
 router.get("/credit", async (req, res) => {
     const minerId = req.body.minerId;
-    let minerInfo;
     try {
-        minerInfo = await MinerRepository.getMinerDataById(minerId);
-
+        const minerInfo = await MinerRepository.getMinerDataById(minerId);
         return res.status(200).send({ credits: minerInfo.credits });
     }
     catch (e) {
-        return res.status(500).send(`Unable to fetch minerId: ${minerId}`)
+        logger.error(e);
+        return res.status(500).send({ error: `Unable to fetch minerId: ${minerId}`, code: 500 });
     }
 
 
