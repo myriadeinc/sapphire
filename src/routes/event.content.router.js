@@ -72,7 +72,7 @@ router.get("/active", async (req, res) => {
     }
     catch (e) {
         logger.error(e)
-        return res.status(500).send('ERROR FETCHING EVENT CONTENT')
+        return res.status(500).send({ error: 'ERROR FETCHING EVENT CONTENT', code: 500 })
     }
 })
 
@@ -107,7 +107,7 @@ router.get("/:id", async (req, res) => {
     }
     catch (e) {
         logger.error(e)
-        return res.status(500).send('ERROR FETCHING EVENT CONTENT')
+        return res.status(500).send({ error: 'ERROR FETCHING EVENT CONTENT', code: 500 })
     }
 })
 
@@ -118,7 +118,7 @@ router.post("/create", async (req, res) => {
     }
     catch (e) {
         logger.error(e)
-        return res.status(500).send('ERROR CREATING EVENT CONTENT')
+        return res.status(500).send({ error: 'ERROR CREATING EVENT CONTENT', code: 500 })
     }
 })
 

@@ -25,8 +25,10 @@ router.post(
 
       const txSucceeds = CreditEventService.create(minerId, amount, req.body.lockType, req.body.comments)
       if (!txSucceeds) {
+        logger.error(`Insufficient funds for purchase amount ${amount}`);
         return res.status(406).send({
-          error: `Insufficient funds for purchase amount ${amount}`
+          error: `Insufficient funds for purchase amount ${amount}`,
+          code: 406
         });
       }
 
@@ -38,7 +40,8 @@ router.post(
       return res.status(200).send(reply);
     }
     catch (e) {
-      return res.status(500).send("BAD CREDIT EVENT")
+      logger.error(e);
+      return res.status(500).send({ error: 'BAD CREDIT EVENT', code: 500 })
     }
   }
 )
@@ -82,7 +85,7 @@ router.get("/allEvents", AuthMiddleware.validateMinerId, async (req, res) => {
   }
   catch (e) {
     logger.error(e)
-    return res.status(500).send('ERROR FETCHING CREDIT EVENTS')
+    return res.status(500).send({ error: 'ERROR FETCHING CREDIT EVENTS', code: 500 })
   }
 })
 
