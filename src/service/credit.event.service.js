@@ -63,7 +63,6 @@ const CreditEventService = {
     return [...new Set(participants)]
   },
 
-
   getCreditEvents: (minerId) => CreditEventModel.findAll({
     attributes: ["id", "amount", "lockType", "eventTime","contentId", "status"],
     where: {

@@ -18,7 +18,8 @@ router.get("/hashrates",
     async (req, res) => {
         const minerId = req.body.minerId;
         try {
-            const rawRates = await MinerRepository.getRecentHashrates(minerId, 720);
+            const limit = Math.min(req.query.limit, 720) || 720;
+            const rawRates = await MinerRepository.getRecentHashrates(minerId, limit);
             return res.status(200).send(rawRates);
         }
         catch (e) {
@@ -37,8 +38,6 @@ router.get("/credit", async (req, res) => {
         logger.error(e);
         return res.status(500).send({ error: `Unable to fetch minerId: ${minerId}`, code: 500 });
     }
-
-
 });
 
 router.get("/fakeData", async (req, res) => {
