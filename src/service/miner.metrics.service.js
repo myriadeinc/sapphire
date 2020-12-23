@@ -18,9 +18,7 @@ const MinerMetricsService = {
     locked: false
   },
 
-
   convertSharesToHashrate: async (blockHeight, forceCalc = false) => {
-
     // Get all the shares for a given block, then we convert them to approx. hashrate (which is [total difficulty * share count] / 120s)
     const miners = await MinerRepository.getAllMiners();
     const time = Date.now();
