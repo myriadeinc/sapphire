@@ -42,6 +42,7 @@ const MinerRepository = {
       throw err;
     });
   },
+
   getAllMinerHashrates: (blockHeight) => {
     return HashRateModel.findAll({
       raw: true,
@@ -64,7 +65,7 @@ const MinerRepository = {
     }).catch((err) => {
       logger.error("Error inserting share!")
       logger.error(err);
-      throw err;
+      
     });
   },
 
@@ -106,6 +107,7 @@ const MinerRepository = {
       throw err;
     });
   },
+
   getRecentHashrates: (minerId, nBlocks) => {
     return HashRateModel.findAll({
       attributes: ["blockHeight", "time", "rate"],
@@ -117,6 +119,7 @@ const MinerRepository = {
       order: ['blockHeight']
     })
   },
+
   getRecentShares: (minerId, nBlocks) => {
     return HashRateModel.findAll({
       attributes: [],
@@ -128,7 +131,6 @@ const MinerRepository = {
       order: ['blockHeight']
     })
   },
-
 
   getMiner: (minerId) => {
     return MinerModel.findOrCreate({

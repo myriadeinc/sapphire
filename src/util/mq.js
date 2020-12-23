@@ -60,8 +60,11 @@ const MQ = {
         return channel.consume(queue, (msg) => {
           if (null !== msg) {
             channel.ack(msg);
-            // logger.info(`Consuming message: ${msg.content.toString()}\n from queue ${queue}`);
-            return cb(JSON.parse(msg.content.toString()));
+            
+        if (config.get("rabbitmq:debug")) {
+         
+          logger.info(`Consuming message: ${msg.content.toString()}\n from queue ${queue}`);
+        }return cb(JSON.parse(msg.content.toString()));
           }
         });
       })

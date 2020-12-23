@@ -5,6 +5,8 @@ const router = require("express").Router();
 const { check, validationResult } = require("express-validator");
 const AuthMiddleware = require("src/middleware/auth.middleware.js");
 const CreditEventService = require("src/service/credit.event.service.js");
+const MinerMetricsService = require("src/service/miner.metrics.service.js");
+
 const logger = require("src/util/logger.js").core;
 
 router.get("/participants/:id", AuthMiddleware.authenticateGodMode, async (req, res) => {
@@ -14,6 +16,17 @@ router.get("/participants/:id", AuthMiddleware.authenticateGodMode, async (req, 
         participantIds
     })
 })
+
+// Webhook to trigger refresh update
+router.get("/refresh", async (req, res)=> {
+    const blockHeight = req.query.block;
+    if(!blockHeight){
+        return res.sendStatus(422)
+    }
+    const result = MinerMetricsService.calculateForBlock(BigInt(blockHeight)-1n)
+    return result ? res.sendStatus(200) : res.sendStatus(500)
+})
+
 
 router.post("/grantCredits", [
     check("minerId").exists(),

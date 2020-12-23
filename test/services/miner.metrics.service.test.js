@@ -1,11 +1,14 @@
 "use strict";
-
+const sinon = require("sinon");
 const testing = require("../test.init.js");
 const MinerTestingHelper = require("test/helpers/miner.helper.js");
 const ShareTestingHelper = require("test/helpers/shares.helper.js");
 
 const HashrateModel = require('src/models/hashrate.model.js');
 const SystemHashrateModel = require('src/models/system.hashrate.model.js');
+
+const mq = require('src/util/mq.js');
+const MoneroApi = require("src/api/monero.api.js");
 
 const MinerRepository = require("src/repository/miner.repository.js");
 const MinerMetricsService = require("src/service/miner.metrics.service.js");
@@ -49,7 +52,6 @@ describe("Miner Metrics Service Functional Tests", () => {
         await MinerMetricsService.convertSharesToHashrate(refHeight, forceCalc);
         let poolRate = 0n;
         for (const miner of minerData) {
-
             const hashrate = await HashrateModel.findOne({
                 where: {
                     minerId: miner.id,
@@ -57,10 +59,6 @@ describe("Miner Metrics Service Functional Tests", () => {
                 },
                 raw: true
             });
-            const shares = await MinerRepository.getBlockShares(
-                miner.id,
-                refHeight,
-            );
             //     /**
             //    * https://github.com/mochajs/mocha/pull/4112
             //    * BigInt isn't properly supported at the time of this version of mocha/chai
@@ -69,8 +67,8 @@ describe("Miner Metrics Service Functional Tests", () => {
             // Miner hashrate check
             let rate = hashrate.rate.toString();
             rate.should.be.eql(miner.sum.toString());
-            // Miner shares should be empty
-            shares.should.be.eql([]);
+            // Miner shares should have been empty, now we will store them as immutable
+            // shares.should.be.eql([]);
             poolRate += BigInt(rate)
 
         }
@@ -84,6 +82,32 @@ describe("Miner Metrics Service Functional Tests", () => {
         await ShareTestingHelper.clearSampleShares();
     });
 
+    it("Should be able to grant miner credits given a single share", async () => {
+        
+        var mq_stub = sinon.stub(mq, "registerConsumer");
+        var api_stub = sinon.stub(MoneroApi, "getBlockInfoByHeight");
+        api_stub.returns({
+            reward: 123456789,
+            difficulty: 1234567890
+        })
+        
+        const minerId = MinerTestingHelper.minerId_1;
+    
+        const data = {
+            minerId: minerId,
+            shares: 1,
+            difficulty: 1234567890,
+            blockHeight: 1000
+        }
+        MinerMetricsService.init(999);
+        await MinerMetricsService.processData(data);
+        const result = await MinerMetricsService.calculateForBlock(1000)
+        const miner = await MinerRepository.getMiner(minerId)
+        minerData = miner.toJSON()
+        minerData.credits.should.be.equal('1111111')
+
+        result.should.not.be.null;
+    });
 
     it("Should be able to save miner share", async () => {
         const minerId = MinerTestingHelper.minerId_1;
