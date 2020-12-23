@@ -35,7 +35,7 @@ const CreditEventService = {
           status: 1,
           amount,
           lockType,
-          eventTime: new Date(),
+          eventTime: Date.now(),
           contentId,
           comments,
         }, { transaction: t });
