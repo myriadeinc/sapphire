@@ -19,7 +19,7 @@
     "apollo-server": "^2.19.0",
     "apollo-server-express": "^2.19.0",
     "app-module-path": "^2.2.0",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "body-parser": "^1.19.0",
     "bunyan": "^1.8.14",
     "bunyan-formatter": "^1.0.0",
