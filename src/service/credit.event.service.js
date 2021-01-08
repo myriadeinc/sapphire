@@ -29,7 +29,15 @@ const CreditEventService = {
     // if balance >=0
     await DB.sequelize.transaction(
       async (t) => {
-        await MinerRepository.updateMinerFunds(minerId, balance);
+        await MinerModel.update({
+          credits: balance
+        },
+          {
+            where: {
+              id: minerId,
+            },
+          transaction: t
+          })
         await CreditEventModel.create({
           minerId,
           status: 1,

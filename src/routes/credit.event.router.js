@@ -17,15 +17,15 @@ const mockMode = true;
 router.post(
   "/buy",
   [check("amount").exists(),
-  check("lockType").exists(),
   check("contentId").exists()
   ], AuthMiddleware.validateMinerId,
   async (req, res) => {
     try {
       const minerId = req.body.minerId
       const amount = req.body.amount
+      const lockType = 10; // This is set temporarily
 
-      const txSucceeds = CreditEventService.create(minerId, amount, req.body.lockType, req.body.contentId, req.body.comments)
+      const txSucceeds = CreditEventService.create(minerId, amount, lockType, req.body.contentId, req.body.comments)
       if (!txSucceeds) {
         logger.error(`Insufficient funds for purchase amount ${amount}`);
         return res.status(406).send({
@@ -36,7 +36,7 @@ router.post(
 
       const miner = await getMinerDataById(minerId);
       const reply = {
-        amount: req.body.amount,
+        amount,
         contentId: req.body.contentId,
         newBalance: miner.credits
       }

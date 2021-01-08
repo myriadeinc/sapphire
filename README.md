@@ -83,7 +83,7 @@ private: {
     changePriceFactor: Changes the entry price by a specific factor
 }
 
-}```
+}
 
   
 ### Integer Mapping for Specific Properties
