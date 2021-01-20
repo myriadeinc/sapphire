@@ -104,7 +104,7 @@ describe("Miner Metrics Service Functional Tests", () => {
         const result = await MinerMetricsService.calculateForBlock(1000)
         const miner = await MinerRepository.getMiner(minerId)
         minerData = miner.toJSON()
-        minerData.credits.should.be.equal('1111111')
+        minerData.credits.should.be.equal('111')
 
         result.should.not.be.null;
     });
