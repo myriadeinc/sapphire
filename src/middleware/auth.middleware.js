@@ -4,6 +4,8 @@ const jwt = require("jsonwebtoken");
 
 const config = require("src/util/config.js");
 const logger = require("src/util/logger.js").account;
+const { getMiner } = require("src/repository/miner.repository");
+
 
 const decodeAndVerify = (token) => {
   return new Promise((resolve, reject) => {
@@ -66,7 +68,7 @@ const AuthMiddleware = {
       .then(token => {
         req.body.minerId = token.sub;
         req.token = token;
-        return next();
+        return getMiner(req.body.minerId).then(miner => next())
       })
       .catch(err => {
         logger.error(`Failed authentication for ${tokenString} : ${err}`);

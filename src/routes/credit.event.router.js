@@ -8,7 +8,7 @@ const AuthMiddleware = require("src/middleware/auth.middleware.js");
 const CreditEventService = require("src/service/credit.event.service.js");
 const MinerRepository = require("src/repository/miner.repository.js");
 const logger = require("src/util/logger.js").db;
-const { getMinerDataById } = require("../repository/miner.repository");
+const { getMinerDataById } = require("src/repository/miner.repository");
 const mockMode = true;
 
 /**
