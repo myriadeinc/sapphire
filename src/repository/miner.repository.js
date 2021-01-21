@@ -116,7 +116,7 @@ const MinerRepository = {
         minerId: minerId,
       },
       limit: nBlocks,
-      order: ['blockHeight']
+      order: [['blockHeight','DESC']]
     })
   },
 
