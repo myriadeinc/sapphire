@@ -59,7 +59,11 @@ Gets requests from emerald and updates the databse. Rabbitmq is set up on Sapphi
     ├── Tests...
 
 ```
-
+### Credit Events
+`Status`: 
+0 -> Closed
+1 -> Pending
+2 -> Won
 
 
 ### Credit Event Content
