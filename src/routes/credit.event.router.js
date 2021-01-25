@@ -32,7 +32,7 @@ router.post(
         })
       }
 
-      const txSucceeds = CreditEventService.create(minerId, amount, req.body.lockType, req.body.contentId, req.body.comments)
+      const txSucceeds = await CreditEventService.create(minerId, amount, lockType, req.body.contentId, req.body.comments)
       if (!txSucceeds) {
         logger.error(`Insufficient funds for purchase amount ${amount}`);
         return res.status(406).send({
