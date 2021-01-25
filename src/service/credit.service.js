@@ -37,7 +37,7 @@ const CreditService = {
                 break;
             // useMyriade is default for now, will change in the future
             default:
-                finalCredit = (BigInt(systemInfo.reward) * BigInt(minerRate) * 9n) / ((BigInt(systemInfo.globalDiff) / 120n) * 1000n)
+                finalCredit = (BigInt(systemInfo.reward) * BigInt(minerRate) * 9n) / ((BigInt(systemInfo.globalDiff) / 120n) * 10000000n)
         }
         return finalCredit;
     }

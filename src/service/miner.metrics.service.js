@@ -71,13 +71,7 @@ const MinerMetricsService = {
             },
             transaction: t
           });
-        await ShareModel.update({ status: 1 }, {
-          where: {
-            blockHeight,
-            status: 0
-            },
-          transaction: t
-        })
+        
       })
     }
     catch (e) {
@@ -87,36 +81,43 @@ const MinerMetricsService = {
     }
     return true;
   },
+  calculateForBlock: async (blockHeight) => {
+   try{
+     // Because BigInt isn't fully supported everywhere
+     blockHeight = blockHeight.toString()
+      logger.info(`New BlockHeight detected, processing hashrate for last known blockHeight ${blockHeight}`)
+      const success = await MinerMetricsService.convertSharesToHashrate(blockHeight);
+      
+      // Once we successfully convert shares to hashrate and get block info
+      if (!success) {
+        logger.error("Convert shares to hashrate not successful")
+        return false;
+      }
+      // Update credit balance for each miner
+      await CreditService.hashrateToCredits(blockHeight);
+      MinerMetricsService.currentHeight.blockHeight = (blockHeight+1n).toString();
+      
+   }
+   catch(e){
+     logger.error(e)
+     return false
+   }
+   return true;
+  
+  },
 
   processData: async (data, forceCalc = false) => {
     try {
+      // Because we are not syncing with Diamond
       const currMiner = await MinerRepository.getMiner(data.minerId);
-      // Skip stale shares
-      if (data.blockHeight < MinerMetricsService.currentHeight.blockHeight && !forceCalc) return 0;
-      
-      await MinerRepository.insertShare(
+      const result = await MinerRepository.insertShare(
         data.minerId,
         data.shares,
         data.difficulty,
         data.blockHeight,
-        new Date(data.time),
+        new Date(data.timestamp),
       );
-      const currentHeight = BigInt(MinerMetricsService.currentHeight.blockHeight);
-      if (currentHeight < BigInt(data.blockHeight) && !MinerMetricsService.currentHeight.locked) {
-        logger.info(`New BlockHeight detected, processing hashrate for blockHeight ${currentHeight}`)
-        const success = await MinerMetricsService.convertSharesToHashrate(currentHeight);
-        MinerMetricsService.currentHeight.locked = true;
-        // Once we successfully convert shares to hashrate and get block info
-        if (!success) {
-          logger.error("Convert shares to hashrate not successful")
-          return 2;
-        }
-        // Update credit balance for each miner
-        await CreditService.hashrateToCredits(currentHeight);
-        MinerMetricsService.currentHeight.blockHeight = data.blockHeight;
-        MinerMetricsService.currentHeight.locked = false;
-        return 3;
-      }
+      
     } catch (err) {
       logger.error(err);
       return 0;

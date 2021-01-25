@@ -65,7 +65,7 @@ const MinerRepository = {
     }).catch((err) => {
       logger.error("Error inserting share!")
       logger.error(err);
-      throw err;
+      
     });
   },
 
@@ -116,7 +116,7 @@ const MinerRepository = {
         minerId: minerId,
       },
       limit: nBlocks,
-      order: ['blockHeight']
+      order: [['blockHeight','DESC']]
     })
   },
 

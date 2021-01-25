@@ -8,7 +8,7 @@ const AuthMiddleware = require("src/middleware/auth.middleware.js");
 const CreditEventService = require("src/service/credit.event.service.js");
 const MinerRepository = require("src/repository/miner.repository.js");
 const logger = require("src/util/logger.js").db;
-const { getMinerDataById } = require("../repository/miner.repository");
+const { getMinerDataById } = require("src/repository/miner.repository");
 const mockMode = true;
 
 /**
@@ -17,13 +17,13 @@ const mockMode = true;
 router.post(
   "/buy",
   [check("amount").exists(),
-  check("lockType").exists(),
   check("contentId").exists()
   ], AuthMiddleware.validateMinerId,
   async (req, res) => {
     try {
       const minerId = req.body.minerId
       const amount = req.body.amount
+      const lockType = 10; // This is set temporarily
 
       if (amount < 1) {
         return res.status(406).send({
@@ -43,7 +43,7 @@ router.post(
 
       const miner = await getMinerDataById(minerId);
       const reply = {
-        amount: req.body.amount,
+        amount,
         contentId: req.body.contentId,
         newBalance: miner.credits
       }
