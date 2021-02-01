@@ -8,8 +8,6 @@ const ShareModel = require("src/models/share.model.js");
 
 const logger = require("src/util/logger.js").db;
 
-router.use(AuthMiddleware.validateMinerId);
-
 router.get("/poolInfo",
     async (req, res) => {
         try {
