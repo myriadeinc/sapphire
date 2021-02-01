@@ -25,6 +25,13 @@ router.post(
       const amount = req.body.amount
       const lockType = 10; // This is set temporarily
 
+      if (amount < 1) {
+        return res.status(406).send({
+          error: `Insufficient purchase amount ${amount}`,
+          code: 406
+        })
+      }
+
       const txSucceeds = await CreditEventService.create(minerId, amount, lockType, req.body.contentId, req.body.comments)
       if (!txSucceeds) {
         logger.error(`Insufficient funds for purchase amount ${amount}`);
