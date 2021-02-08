@@ -11,6 +11,10 @@ const logger = require("src/util/logger.js").db;
 router.get("/active", async (req, res) => {
     try {
         const entries = await CreditEventService.getActiveContent();
+        
+        for (const entry of entries) {
+            entry.data.numTickets = await CreditEventService.getPurchasedTickets(entry.id);
+        }
 
         if (
             req.headers.authorization &&
@@ -24,7 +28,7 @@ router.get("/active", async (req, res) => {
                 private: {
                     usdRate: 1, //this is a temp value
                     changePriceFactor: 1 //this is a temp value
-                }
+                },
             })));
         }
 
@@ -78,18 +82,6 @@ router.post("/create", async (req, res) => {
     catch (e) {
         logger.error(e);
         return res.status(500).send({ error: 'ERROR CREATING EVENT CONTENT', code: 500 });
-    }
-})
-
-router.get("/tickets/:id", async (req, res) => {
-    try {
-        const numTickets = await CreditEventService.getPurchasedTickets(req.params.id);
-
-        return res.status(200).send({ numTickets });
-    }
-    catch (e) {
-        logger.error(e);
-        return res.status(500).send({ error: 'ERROR FETCHING TICKET AMOUNT', code: 500 });
     }
 })
 
