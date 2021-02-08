@@ -60,38 +60,6 @@ router.post(
 router.get("/allEvents", AuthMiddleware.validateMinerId, async (req, res) => {
   try {
     const entries = await CreditEventService.getCreditEvents(req.body.minerId);
-    // const eventTime = Date.now();
-    // const entries = {
-    //   "entries": [
-    //     {
-    //       id: 1,
-    //       amount: 100,
-    //       lockType: 99,
-    //       eventTime,
-    //       "purchaseTime": 1603328809963,
-    //       contentId: 12,
-    //       status: "WON"
-    //     },
-    //     {
-    //       id: 2,
-    //       amount: 900,
-    //       lockType: 98,
-    //       eventTime,
-    //       "purchaseTime": 1503328809963,
-    //       contentId: 47,
-    //       status: "PENDING"
-    //     },
-    //     {
-    //       id: 3,
-    //       amount: 400,
-    //       lockType: 97,
-    //       eventTime,
-    //       "purchaseTime": 1603328109963,
-    //       contentId: 87,
-    //       status: "LOST"
-    //     }
-    //   ]
-    // };
     return res.status(200).send(entries)
   }
   catch (e) {

@@ -73,11 +73,23 @@ router.get("/:id", async (req, res) => {
 router.post("/create", async (req, res) => {
     try {
         await CreditEventService.createEvent(req.body.data, req.body.tags);
-        return res.status(200).send('OK')
+        return res.status(200).send('OK');
     }
     catch (e) {
-        logger.error(e)
-        return res.status(500).send({ error: 'ERROR CREATING EVENT CONTENT', code: 500 })
+        logger.error(e);
+        return res.status(500).send({ error: 'ERROR CREATING EVENT CONTENT', code: 500 });
+    }
+})
+
+router.get("/tickets/:id", async (req, res) => {
+    try {
+        const numTickets = await CreditEventService.getPurchasedTickets(req.params.id);
+
+        return res.status(200).send({ numTickets });
+    }
+    catch (e) {
+        logger.error(e);
+        return res.status(500).send({ error: 'ERROR FETCHING TICKET AMOUNT', code: 500 });
     }
 })
 

@@ -78,8 +78,31 @@ const CreditEventService = {
     }
   }),
 
+  getTickets: (eventId) => CreditEventModel.findAll({
+    attributes: ["amount"],
+    where: { contentId: eventId }
+  }),
+
+  getPurchasedTickets: async (eventId) => {
+    const tickets = await CreditEventService.getTickets(eventId);
+    const event = await CreditEventService.getEvent(eventId);
+
+    const ticketPrice = event.data.entryPrice ? event.data.entryPrice : 1;
+
+    let numTickets = 0;
+    tickets.forEach(ticket => {
+      numTickets += (ticket.amount / ticketPrice);
+    });
+
+    return numTickets;
+  },
+
   createEvent: async (data, tags = "default") => EventModel.create({ data, tags, status: 1 }),
   
+  getEvent: (eventId) => EventModel.findOne({
+    where: {id: eventId}
+  }),
+
   getActiveContent: () => EventModel.findAll({ where: { status: 1 } }),
 
   keyReference: {
