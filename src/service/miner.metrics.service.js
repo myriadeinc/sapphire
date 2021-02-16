@@ -23,15 +23,17 @@ const MinerMetricsService = {
     const miners = await MinerRepository.getAllMiners();
     const time = Date.now();
     let poolHashrate = 0n;
+    const blockInfo = await MoneroApi.getBlockInfoByHeight(blockHeight.toString(), forceCalc)
+
     const minerStats = await Promise.all(miners.map(async (miner) => {
-            const minerShares = await MinerRepository.getBlockShares(miner.id,blockHeight);
-            if (minerShares.length == 0) return { id: miner.id, rate: 0n }
-            const minerHashrate = minerShares.reduce((base, share) => {
-              return base + (BigInt(share.share) * BigInt(share.difficulty));
-            }, 0n) / 120n;
-            poolHashrate+=minerHashrate;
-            return { id: miner.id, rate: minerHashrate}
-          })
+      const minerShares = await MinerRepository.getBlockShares(miner.id, blockHeight);
+      if (minerShares.length == 0) return { id: miner.id, rate: 0n }
+      const minerHashrate = minerShares.reduce((base, share) => {
+        return base + (BigInt(share.share) * BigInt(share.difficulty));
+      }, 0n) / 120n;
+      poolHashrate += minerHashrate;
+      return { id: miner.id, rate: minerHashrate }
+    })
     )
     logger.info(`Pool Hashrate for block ${blockHeight} at ${poolHashrate}`)
     // Need to wrap all of it inside a DB transaction so that if one fails, all fails and DB
@@ -39,12 +41,11 @@ const MinerMetricsService = {
     try {
       await DB.sequelize.transaction(async (t) => {
         // This is not the most accurate method of collecting pool hashrate, but we can always refresh via calling
-        const blockInfo = await MoneroApi.getBlockInfoByHeight(blockHeight.toString(), forceCalc)
         const reward = blockInfo.reward;
         const globalDiff = blockInfo.difficulty;
         logger.info(`Block info: reward is ${reward} \t diff is ${globalDiff}`);
 
-        await Promise.all(minerStats.map(miner => 
+        await Promise.all(minerStats.map(miner =>
           HashrateModel.upsert(
             {
               minerId: miner.id,
@@ -58,20 +59,20 @@ const MinerMetricsService = {
                 minerId: miner.id,
                 blockHeight
               }
-          })));
+            })));
 
         await SystemHashrateModel.upsert({
-            blockHeight,
-            poolRate: poolHashrate,
-            reward,
-            globalDiff,
-          }, {
-            where: {
-              blockHeight
-            },
-            transaction: t
-          });
-        
+          blockHeight,
+          poolRate: poolHashrate,
+          reward,
+          globalDiff,
+        }, {
+          where: {
+            blockHeight
+          },
+          transaction: t
+        });
+
       })
     }
     catch (e) {
@@ -82,12 +83,12 @@ const MinerMetricsService = {
     return true;
   },
   calculateForBlock: async (blockHeight) => {
-   try{
-     // Because BigInt isn't fully supported everywhere
-     blockHeight = blockHeight.toString()
+    try {
+      // Because BigInt isn't fully supported everywhere
+      blockHeight = blockHeight.toString()
       logger.info(`New BlockHeight detected, processing hashrate for last known blockHeight ${blockHeight}`)
       const success = await MinerMetricsService.convertSharesToHashrate(blockHeight);
-      
+
       // Once we successfully convert shares to hashrate and get block info
       if (!success) {
         logger.error("Convert shares to hashrate not successful")
@@ -95,15 +96,15 @@ const MinerMetricsService = {
       }
       // Update credit balance for each miner
       await CreditService.hashrateToCredits(blockHeight);
-      MinerMetricsService.currentHeight.blockHeight = (blockHeight+1n).toString();
-      
-   }
-   catch(e){
-     logger.error(e)
-     return false
-   }
-   return true;
-  
+      MinerMetricsService.currentHeight.blockHeight = (blockHeight + 1n).toString();
+
+    }
+    catch (e) {
+      logger.error(e)
+      return false
+    }
+    return true;
+
   },
 
   processData: async (data, forceCalc = false) => {
@@ -117,7 +118,7 @@ const MinerMetricsService = {
         data.blockHeight,
         new Date(data.timestamp),
       );
-      
+
     } catch (err) {
       logger.error(err);
       return 0;
