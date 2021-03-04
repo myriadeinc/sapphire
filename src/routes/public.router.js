@@ -21,7 +21,7 @@ router.get("/poolInfo",
                 blockHeight: currHeight,
             }});
             return res.status(200).send({
-                "hashrate": rate,
+                "hashrate": rate && rate.poolRate,
                 "miner_count": nminers,
                 "fee": "5%",
                 "block_height": currHeight,
