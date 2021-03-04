@@ -22,7 +22,10 @@ router.get("/poolInfo",
             }});
             return res.status(200).send({
                 "hashrate": rate,
-                "miners": nminers
+                "miner_count": nminers,
+                "fee": "5%",
+                "block_height": currHeight,
+                "last_block_found": "NEVER"
             });
         }
         catch (e) {
