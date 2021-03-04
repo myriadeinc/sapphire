@@ -11,7 +11,7 @@ const logger = require("src/util/logger.js").db;
 router.get("/poolInfo",
     async (req, res) => {
         try {
-            const currHeight = MinerMetricsService.currentHeight.blockHeight;
+            const currHeight = Math.floor(parseInt(MinerMetricsService.currentHeight.blockHeight) /  10);
             const rate = await SystemHashrateModel.findByPk(currHeight.toString());
             const nminers = await ShareModel.count({
                 distinct: true,
