@@ -11,6 +11,7 @@ const EventModel = require("src/models/event.cms.model.js");
 const Op = require('sequelize').Op;
 const logger = require("src/util/logger.js").core;
 const DB = require("src/util/db.js");
+const { QueryTypes } = require("sequelize");
 
 const CreditEventService = {
   /**
@@ -69,6 +70,15 @@ const CreditEventService = {
     let participants = await CreditEventService.getParticipants(eventId);
     participants = participants.map(participant => participant.minerId.toString())
     return [...new Set(participants)]
+  },
+
+  getJoinedCreditEvents: async (minerId) => {
+    const entries = await DB.sequelize.query('SELECT * FROM "Sapphire"."CreditEvents" a INNER JOIN "Sapphire"."EventCMS" b ON b.id = a."contentId" WHERE "minerId" = ?;', { 
+      replacements: [minerId],
+      type: QueryTypes.SELECT
+    });
+
+    return entries;
   },
 
   getCreditEvents: (minerId) => CreditEventModel.findAll({

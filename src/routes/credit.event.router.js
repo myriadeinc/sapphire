@@ -9,7 +9,7 @@ const CreditEventService = require("src/service/credit.event.service.js");
 const MinerRepository = require("src/repository/miner.repository.js");
 const logger = require("src/util/logger.js").db;
 const { getMinerDataById } = require("src/repository/miner.repository");
-const mockMode = true;
+
 
 /**
  * Authenticated miner locks funds that is related to a credit event
@@ -59,8 +59,23 @@ router.post(
 
 router.get("/allEvents", AuthMiddleware.validateMinerId, async (req, res) => {
   try {
-    const entries = await CreditEventService.getCreditEvents(req.body.minerId);
-    return res.status(200).send(entries)
+    let entries = await CreditEventService.getJoinedCreditEvents(req.body.minerId);
+
+    entries = entries.map(entry => {
+      const data = entry.data;
+
+      return {
+        title: data.title,
+        tickets: entry.amount / data.entryPrice,
+        amount: data.prizeAmount,
+        purchased: new Date(entry.eventTime).getTime() / 1000,
+        winner: data.winner ? `Miner #${data.winner}` : '-',
+        status: entry.status,
+        contentId: entry.contentId
+      };
+    });
+
+    return res.status(200).send(entries);
   }
   catch (e) {
     logger.error(e)
