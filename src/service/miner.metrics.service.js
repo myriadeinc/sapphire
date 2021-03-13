@@ -20,12 +20,15 @@ const MinerMetricsService = {
 
   convertSharesToHashrate: async (blockHeight, forceCalc = false) => {
     // Get all the shares for a given block, then we convert them to approx. hashrate (which is [total difficulty * share count] / 120s)
+    logger.info(`get all miners`)
     const miners = await MinerRepository.getAllMiners();
     const time = Date.now();
     let poolHashrate = 0n;
+    logger.info(`get block info`)
     const blockInfo = await MoneroApi.getBlockInfoByHeight(blockHeight.toString(), forceCalc)
 
-    const minerStats = await Promise.all(miners.map(async (miner) => {
+    logger.info(`Retrieving miner stats`)
+    let minerStats = await Promise.all(miners.map(async (miner) => {
       const minerShares = await MinerRepository.getBlockShares(miner.id, blockHeight);
       if (minerShares.length == 0) return { id: miner.id, rate: 0n }
       const minerHashrate = minerShares.reduce((base, share) => {
@@ -35,6 +38,10 @@ const MinerMetricsService = {
       return { id: miner.id, rate: minerHashrate }
     })
     )
+
+    logger.info(`filter miner stats`)
+    minerStats = minerStats.filter(stat => stat.rate != 0n);
+
     logger.info(`Pool Hashrate for block ${blockHeight} at ${poolHashrate}`)
     // Need to wrap all of it inside a DB transaction so that if one fails, all fails and DB
     //  performs a rollback to initial state. This provides strong guarantuee.
@@ -95,6 +102,7 @@ const MinerMetricsService = {
         return false;
       }
       // Update credit balance for each miner
+      logger.info(`Converting hashrates to credits for blockHeight ${blockHeight}`)
       await CreditService.hashrateToCredits(blockHeight);
       MinerMetricsService.currentHeight.blockHeight = (blockHeight + 1n).toString();
 
