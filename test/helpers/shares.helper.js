@@ -53,6 +53,7 @@ const SharesHelper = {
       await Promise.all(
         shares.map(async (share) => {
           sum += BigInt(share.share * share.difficulty);
+
           return MinerRepository.insertShare(miner.id, share.share, share.difficulty, refHeight, new Date());
         })
       )

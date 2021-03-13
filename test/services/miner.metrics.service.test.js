@@ -8,6 +8,8 @@ const HashrateModel = require('src/models/hashrate.model.js');
 const SystemHashrateModel = require('src/models/system.hashrate.model.js');
 
 const mq = require('src/util/mq.js');
+const cache = require('src/util/cache.js');
+
 const MoneroApi = require("src/api/monero.api.js");
 
 const MinerRepository = require("src/repository/miner.repository.js");
@@ -35,6 +37,7 @@ describe("Miner Metrics Service Functional Tests", () => {
     });
 
     before("Setting up miners and shares", async () => {
+        await testing.cacheReady;
         await Promise.all([
             MinerTestingHelper.clearAllMiners(),
             MinerTestingHelper.createSampleMiners(),
@@ -43,7 +46,9 @@ describe("Miner Metrics Service Functional Tests", () => {
     });
 
     after("Cleanup", async () => {
+        await cache.clear();
         await MinerTestingHelper.clearAllMiners();
+
     });
 
     it("Should be able to calculate proper pool and miner hashrate", async () => {
@@ -83,16 +88,16 @@ describe("Miner Metrics Service Functional Tests", () => {
     });
 
     it("Should be able to grant miner credits given a single share", async () => {
-        
+
         var mq_stub = sinon.stub(mq, "registerConsumer");
         var api_stub = sinon.stub(MoneroApi, "getBlockInfoByHeight");
         api_stub.returns({
             reward: 123456789,
             difficulty: 1234567890
         })
-        
+
         const minerId = MinerTestingHelper.minerId_1;
-    
+
         const data = {
             minerId: minerId,
             shares: 1,

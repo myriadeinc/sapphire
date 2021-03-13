@@ -15,8 +15,16 @@ const config = require('nconf')
     .file('environment', { file: `${configPath}/${process.env.NODE_ENV}.json` })
     .file('defaults', { file: `${configPath}/default.json` });
 
+
+const cache = require('src/util/cache.js');
+
 // initialize DB
 const db = require('src/util/db.js');
+const redisUrl = config.get("redis") || 'redis://localhost:6379'
+
+const cacheReady = cache.init({
+    url: redisUrl
+});
 
 const dbReady = db.init(config.get('db'), logger.db)
     .then(() => {
@@ -42,14 +50,19 @@ process.on('unhandledRejection', (reason, promise) => {
 
 
 after('Cleanup', () => {
-    return Promise.all([
-        dbReady.then(() => { return db.close(); }),
-    ]);
+    return dbReady
+        .then(async () => {
+            await db.close();
+            await cache.close();
+        })
+        .catch(err => process.exit(57))
+
 });
 
 module.exports = {
     config: config,
     db: db,
     dbReady: dbReady,
+    cacheReady: cacheReady,
     should: should
 };

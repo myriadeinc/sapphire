@@ -6,6 +6,8 @@ const ShareModel = require("src/models/share.model.js");
 
 const Op = require("src/util/db.js").Sequelize.Op;
 const logger = require("src/util/logger.js").minerRepository;
+const cache = require('src/util/cache.js');
+
 
 const MinerRepository = {
   getAllMiners: (onlyIds = false) => {
@@ -54,19 +56,33 @@ const MinerRepository = {
   },
 
   insertShare: (minerId, share, difficulty, blockHeight, time) => {
-    return ShareModel.create({
-      minerId: minerId,
-      share: Number(share),
-      difficulty: BigInt(difficulty),
-      blockHeight: BigInt(blockHeight),
-      // Add proper time in later build
-      time: new Date(),
-      status: 0
-    }).catch((err) => {
-      logger.error("Error inserting share!")
-      logger.error(err);
-      
-    });
+
+    const minerKey = `${minerId}_${blockHeight}`;
+    const totalDiff = BigInt(share) * BigInt(difficulty);
+
+    return cache.incrBy(minerKey, totalDiff.toString()).then(() => {
+      return {
+        minerId,
+        share: Number(share),
+        difficulty: difficulty.toString(),
+        blockHeight: blockHeight.toString(),
+        time: new Date()
+      }
+    })
+
+    // return ShareModel.create({
+    //   minerId: minerId,
+    //   share: Number(share),
+    //   difficulty: BigInt(difficulty),
+    //   blockHeight: BigInt(blockHeight),
+    //   // Add proper time in later build
+    //   time: new Date(),
+    //   status: 0
+    // }).catch((err) => {
+    //   logger.error("Error inserting share!")
+    //   logger.error(err);
+
+    // });
   },
 
   getSharesByTime: (minerId, startTime, endTime = null) => {
@@ -94,18 +110,26 @@ const MinerRepository = {
   },
 
   getBlockShares: (minerId, blockHeight) => {
-    return ShareModel.findAll({
-      attributes: ["minerId", "difficulty", "share", "blockHeight", "status"],
-      raw: true,
-      where: {
-        minerId,
-        blockHeight,
-        status: 0
-      },
-    }).catch((err) => {
-      logger.error(err);
-      throw err;
-    });
+    const minerKey = `${minerId}_${blockHeight}`
+    // Not the most elegant, but lets preserve compatibility for now
+    return cache.get(minerKey).then((totalDiff) => {
+      return [{
+        share: 1,
+        difficulty: totalDiff || 0
+      }]
+    })
+    // return ShareModel.findAll({
+    //   attributes: ["minerId", "difficulty", "share", "blockHeight", "status"],
+    //   raw: true,
+    //   where: {
+    //     minerId,
+    //     blockHeight,
+    //     status: 0
+    //   },
+    // }).catch((err) => {
+    //   logger.error(err);
+    //   throw err;
+    // });
   },
 
   getRecentHashrates: (minerId, nBlocks) => {
@@ -116,7 +140,7 @@ const MinerRepository = {
         minerId: minerId,
       },
       limit: nBlocks,
-      order: [['blockHeight','DESC']]
+      order: [['blockHeight', 'DESC']]
     })
   },
 

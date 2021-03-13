@@ -29,7 +29,6 @@ const getOptions = (opt, log) => {
     migrations: {
       model_name: 'Migration',
     },
-    operatorsAliases: false,
   });
 
   Options.define.schema = Options.schema;
@@ -43,10 +42,10 @@ const getOptions = (opt, log) => {
 
 const initSchema = async (opt, log) => {
   const schemaName = opt.schema;
-  const res = await DB.sequelize.query(`SELECT schema_name FROM `+
-  ` information_schema.schemata `+
-  `WHERE schema_name = '${schemaName}'`,
-  {type: DB.sequelize.QueryTypes.SELECT});
+  const res = await DB.sequelize.query(`SELECT schema_name FROM ` +
+    ` information_schema.schemata ` +
+    `WHERE schema_name = '${schemaName}'`,
+    { type: DB.sequelize.QueryTypes.SELECT });
 
   if (0 === res.length) {
     log.info(`Schema ${schemaName} does not exist, creating it now`);
@@ -92,8 +91,8 @@ const initUmzug = (opt, log) => {
       pattern = RegExp(opt.pattern);
     } catch (e) {
       throw new Error(
-          `Database config value `+
-        `migrations:pattern must be a valid`+
+        `Database config value ` +
+        `migrations:pattern must be a valid` +
         ` regular expression: ${e.message}`,
       );
     }
@@ -131,8 +130,8 @@ const DB = {
     await initUmzug(opt);
   },
 
-  close: async () => {
-    await DB.sequelize.connectionManager.close();
+  close: () => {
+    return DB.sequelize.connectionManager.close()
   },
 
   migrate: async (opt, log) => {

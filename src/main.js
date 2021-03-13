@@ -6,11 +6,12 @@ require("app-module-path").addPath(rootPath);
 const config = require("src/util/config.js");
 const logger = require("src/util/logger.js");
 const db = require("src/util/db.js");
+const cache = require('src/util/cache.js');
 const mq = require("src/util/mq.js");
 const MoneroApi = require('src/api/monero.api.js')
 
 let server;
-
+const redisUrl = config.get("redis") || 'redis://localhost:6379'
 const main = async () => {
   logger.core.info(`Starting Sapphire service`);
   // global.blockHeight = MoneroApi().getCurrentBlockHeight
@@ -19,6 +20,9 @@ const main = async () => {
   await db.init(config.get("db"), logger.db);
   logger.core.info("Database initialized.");
 
+  await cache.init({
+    url: redisUrl
+  });
   logger.core.info("Initializing messaging queue RabbitMQ");
   await mq.init(config.get("rabbitmq:url"));
 

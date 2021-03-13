@@ -3,8 +3,8 @@
 const MinerRepository = require('src/repository/miner.repository.js');
 const SystemHashrateModel = require('src/models/system.hashrate.model.js');
 const HashrateModel = require("src/models/hashrate.model.js");
-const ShareModel = require('src/models/share.model.js');
 const MoneroApi = require("src/api/monero.api.js");
+const cache = require('src/util/cache.js');
 
 const CreditService = require('src/service/credit.service.js');
 const mq = require('src/util/mq.js');
@@ -20,14 +20,11 @@ const MinerMetricsService = {
 
   convertSharesToHashrate: async (blockHeight, forceCalc = false) => {
     // Get all the shares for a given block, then we convert them to approx. hashrate (which is [total difficulty * share count] / 120s)
-    logger.info(`get all miners`)
     const miners = await MinerRepository.getAllMiners();
     const time = Date.now();
     let poolHashrate = 0n;
-    logger.info(`get block info`)
     const blockInfo = await MoneroApi.getBlockInfoByHeight(blockHeight.toString(), forceCalc)
 
-    logger.info(`Retrieving miner stats`)
     let minerStats = await Promise.all(miners.map(async (miner) => {
       const minerShares = await MinerRepository.getBlockShares(miner.id, blockHeight);
       if (minerShares.length == 0) return { id: miner.id, rate: 0n }
@@ -38,9 +35,8 @@ const MinerMetricsService = {
       return { id: miner.id, rate: minerHashrate }
     })
     )
+    minerStats.filter(miner => miner.rate != 0)
 
-    logger.info(`filter miner stats`)
-    minerStats = minerStats.filter(stat => stat.rate != 0n);
 
     logger.info(`Pool Hashrate for block ${blockHeight} at ${poolHashrate}`)
     // Need to wrap all of it inside a DB transaction so that if one fails, all fails and DB
@@ -117,8 +113,9 @@ const MinerMetricsService = {
 
   processData: async (data, forceCalc = false) => {
     try {
-      // Because we are not syncing with Diamond
+      // Because we are not syncing with Diamond, need to initialize if not exists
       const currMiner = await MinerRepository.getMiner(data.minerId);
+
       const result = await MinerRepository.insertShare(
         data.minerId,
         data.shares,
