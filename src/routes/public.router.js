@@ -4,22 +4,22 @@ const router = require("express").Router();
 /* eslint-enable */
 const MinerMetricsService = require("src/service/miner.metrics.service.js");
 const SystemHashrateModel = require("src/models/system.hashrate.model.js");
-const ShareModel = require("src/models/share.model.js");
+const HashrateModel = require("src/models/hashrate.model.js");
 
 const logger = require("src/util/logger.js").db;
 
 router.get("/poolInfo",
     async (req, res) => {
         try {
-            const currHeight = Math.floor(parseInt(MinerMetricsService.currentHeight.blockHeight) /  10);
+            const currHeight = Math.floor(parseInt(MinerMetricsService.currentHeight.blockHeight) / 10) - 1;
             const rate = await SystemHashrateModel.findByPk(currHeight.toString());
-            const nminers = await ShareModel.count({
+            const nminers = await HashrateModel.count({
                 distinct: true,
                 col: "minerId",
-                
                 where: {
-                blockHeight: currHeight,
-            }});
+                    blockHeight: currHeight,
+                }
+            });
             return res.status(200).send({
                 "hashrate": rate && rate.poolRate,
                 "miner_count": nminers,

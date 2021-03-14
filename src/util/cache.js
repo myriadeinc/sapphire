@@ -33,6 +33,10 @@ const Cache = {
         return redisClient.set(prefixed_key, Cache.stringify(value));
     },
 
+    ttl: (key, seconds, namespace = '') => {
+        const prefixed_key = `${namespace}::${key}`;
+        return redisClient.expire(prefixed_key, seconds)
+    },
     incrBy: (key, value, namespace = '') => {
         const prefixed_key = `${namespace}::${key}`;
         return redisClient.incrby(prefixed_key, Cache.stringify(value));

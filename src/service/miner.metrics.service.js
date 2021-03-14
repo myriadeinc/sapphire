@@ -100,7 +100,7 @@ const MinerMetricsService = {
       // Update credit balance for each miner
       logger.info(`Converting hashrates to credits for blockHeight ${blockHeight}`)
       await CreditService.hashrateToCredits(blockHeight);
-      MinerMetricsService.currentHeight.blockHeight = (blockHeight + 1n).toString();
+      MinerMetricsService.currentHeight.blockHeight = (BigInt(blockHeight) + 1n).toString();
 
     }
     catch (e) {

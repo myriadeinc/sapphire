@@ -59,16 +59,21 @@ const MinerRepository = {
 
     const minerKey = `${minerId}_${blockHeight}`;
     const totalDiff = BigInt(share) * BigInt(difficulty);
+    const namespace = "Sapphire"
 
-    return cache.incrBy(minerKey, totalDiff.toString()).then(() => {
-      return {
-        minerId,
-        share: Number(share),
-        difficulty: difficulty.toString(),
-        blockHeight: blockHeight.toString(),
-        time: new Date()
-      }
-    })
+    return cache.incrBy(minerKey, totalDiff.toString(), namespace)
+      .then(() => {
+        return cache.ttl(minerKey, 3600, namespace)
+      })
+      .then(() => {
+        return {
+          minerId,
+          share: Number(share),
+          difficulty: difficulty.toString(),
+          blockHeight: blockHeight.toString(),
+          time: new Date()
+        }
+      })
 
     // return ShareModel.create({
     //   minerId: minerId,
@@ -111,8 +116,9 @@ const MinerRepository = {
 
   getBlockShares: (minerId, blockHeight) => {
     const minerKey = `${minerId}_${blockHeight}`
+    const namespace = "Sapphire"
     // Not the most elegant, but lets preserve compatibility for now
-    return cache.get(minerKey).then((totalDiff) => {
+    return cache.get(minerKey, namespace).then((totalDiff) => {
       return [{
         share: 1,
         difficulty: totalDiff || 0
