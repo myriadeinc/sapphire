@@ -36,7 +36,7 @@ const main = async () => {
     let blockHeight = await MoneroApi.getInfo();
     blockHeight = blockHeight.height;
     await require("src/service/miner.metrics.service.js").init(blockHeight);
-    logger.core.info("MinerMetrics service listener registered");
+    logger.core.info(`MinerMetrics service listener registered with blockHeight ${blockHeight}`);
   });
 };
 

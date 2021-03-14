@@ -11,13 +11,13 @@ const logger = require("src/util/logger.js").db;
 router.get("/poolInfo",
     async (req, res) => {
         try {
-            const currHeight = Math.floor(parseInt(MinerMetricsService.currentHeight.blockHeight) / 10) - 1;
+            const currHeight = BigInt(MinerMetricsService.currentHeight.blockHeight) - 1n;
             const rate = await SystemHashrateModel.findByPk(currHeight.toString());
             const nminers = await HashrateModel.count({
                 distinct: true,
                 col: "minerId",
                 where: {
-                    blockHeight: currHeight,
+                    blockHeight: currHeight.toString(),
                 }
             });
             return res.status(200).send({
