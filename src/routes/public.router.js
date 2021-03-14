@@ -24,13 +24,13 @@ router.get("/poolInfo",
                 "hashrate": rate && rate.poolRate,
                 "miner_count": nminers,
                 "fee": "5%",
-                "block_height": currHeight,
+                "block_height": currHeight.toString(),
                 "last_block_found": "NEVER"
             });
         }
         catch (e) {
             logger.error(e);
-            return res.status(500).send({ error: `Unable to fetch minerId: ${minerId}`, code: 500 });
+            return res.status(500).send({ error: `Unable to fetch data for block ${currHeight}`, code: 500 });
         }
     });
 
