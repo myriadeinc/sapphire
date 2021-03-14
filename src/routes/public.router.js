@@ -5,6 +5,7 @@ const router = require("express").Router();
 const MinerMetricsService = require("src/service/miner.metrics.service.js");
 const SystemHashrateModel = require("src/models/system.hashrate.model.js");
 const HashrateModel = require("src/models/hashrate.model.js");
+const Sequelize = require('sequelize');
 
 const logger = require("src/util/logger.js").db;
 
@@ -18,6 +19,9 @@ router.get("/poolInfo",
                 col: "minerId",
                 where: {
                     blockHeight: currHeight.toString(),
+                    rate: {
+                        [Sequelize.Op.not]: 0
+                    }
                 }
             });
             return res.status(200).send({
