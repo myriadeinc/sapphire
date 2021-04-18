@@ -5,8 +5,6 @@ const bunyan = require('bunyan')
 const gelfStream = require('gelf-stream')
 const config = require('src/util/config.js');
 
-
-
 const gelfHost = config.get('fluentd_host') || 'localhost';
 const gelfPort = config.get('fluentd_port') || 9999;
 
