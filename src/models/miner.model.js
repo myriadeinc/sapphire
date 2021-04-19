@@ -22,6 +22,16 @@ const MinerModel = DB.sequelize.define(
       allowNull: false,
       defaultValue: 0
     },
+    monero_balance: {
+      type: DB.Sequelize.BIGINT,
+      allowNull: false,
+      defaultValue: 0
+    },
+    pps_ratio: {
+      type: DB.Sequelize.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    }
   },
   {
     paranoid: true,

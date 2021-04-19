@@ -169,6 +169,8 @@ const MinerRepository = {
       },
       defaults: {
         credits: 0,
+        monero_balance: 0,
+        pps_ratio: 0
       },
     })
       .then(([miner, created]) => {

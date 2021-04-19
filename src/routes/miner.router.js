@@ -14,5 +14,4 @@ router.use('/', AuthMiddleware.validateMinerId);
 
 graphQLServer.applyMiddleware({app: router, path: '/'});
 
-
 module.exports = router;

@@ -55,4 +55,33 @@ router.get("/fakeData", async (req, res) => {
     return res.status(200).send({ done: true });
 });
 
+router.get("/ppsratio", async (req, res) => {
+    const minerId = req.body.minerId;
+    try {
+        let { pps_ratio } = await MinerRepository.getMiner(minerId);
+
+        return res.status(200).send({ ppsRatio: pps_ratio });
+    }
+    catch (e) {
+        logger.error(e);
+        return res.status(500).send({ error: `Unable to fetch data for minerId: ${minerId}`, code: 500 });
+    }
+});
+
+router.post("/ppsratio", async (req, res) => {
+    const { minerId, ppsRatio } = req.body;
+    try {
+        if (ppsRatio >= 0 && ppsRatio <= 100) {
+            const miner = await MinerRepository.updateMiner(minerId, { pps_ratio: ppsRatio});
+            return res.status(200).send(ppsRatio);
+        } else {
+            throw 'Invalid pps ratio'
+        }
+    }
+    catch (e) {
+        logger.error(e);
+        return res.status(500).send({ error: `Unable to update data for minerId: ${minerId}`, code: 500 });
+    }
+});
+
 module.exports = router;
