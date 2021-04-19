@@ -16,14 +16,15 @@ const CreditService = {
         // Calculate miner credit based on formula, then update credit, wrap in transaction to ensure all miners receive their credits
         await DB.sequelize.transaction(async (t) => {
             await Promise.all(miners.map(async miner => {
-                const credits = CreditService.creditConverter(miner.rate, systemInfo).toString();
+                const minerModel = await MinerRepository.getMiner(miner.minerId);
+                const credits = CreditService.creditConverter(miner.rate, systemInfo, "useMyriade", minerModel).toString();
                 return MinerRepository.grantMinerCredits(miner.minerId, credits, t)
             }))
         })
         return true;
     },
 
-    creditConverter: (minerRate, systemInfo, strategy = "useMyriade") => {
+    creditConverter: (minerRate, systemInfo, strategy = "useMyriade", miner) => {
         // Reward is saved as XMR atomic units (10^12)
         let finalCredit = 0n;
         switch (strategy) {
@@ -37,7 +38,11 @@ const CreditService = {
                 break;
             // useMyriade is default for now, will change in the future
             default:
-                finalCredit = (BigInt(systemInfo.reward) * BigInt(minerRate) * 9n) / ((BigInt(systemInfo.globalDiff) / 120n) * 1000000n)
+                const ppsRatio = miner ? miner.pps_ratio : 0;
+                finalCredit = (BigInt(systemInfo.reward) * BigInt(minerRate) * 9n) / ((BigInt(systemInfo.globalDiff) / 120n) * 1000000n);
+                if (ppsRatio > 0) {
+                    console.log(minerRate);
+                }
         }
         return finalCredit;
     }
