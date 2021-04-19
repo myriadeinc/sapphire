@@ -7,6 +7,8 @@ const config = require("src/util/config.js");
 const logger = require("src/util/logger.js");
 const db = require("src/util/db.js");
 const cache = require('src/util/cache.js');
+const metrics = require('src/util/metrics.js');
+
 const mq = require("src/util/mq.js");
 const MoneroApi = require('src/api/monero.api.js')
 
@@ -14,6 +16,8 @@ let server;
 const redisUrl = config.get("redis") || 'redis://localhost:6379'
 const main = async () => {
   logger.core.info(`Starting Sapphire service`);
+  logger.core.info('Starting Internal Server Metrics');
+  metrics.init('Sapphire');
   // global.blockHeight = MoneroApi().getCurrentBlockHeight
 
   logger.core.info("Initializing database.");
