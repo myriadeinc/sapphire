@@ -39,9 +39,19 @@ const CreditService = {
             // useMyriade is default for now, will change in the future
             default:
                 const ppsRatio = miner ? miner.pps_ratio : 0;
-                finalCredit = (BigInt(systemInfo.reward) * BigInt(minerRate) * 9n) / ((BigInt(systemInfo.globalDiff) / 120n) * 1000000n);
+                const preSplit = BigInt(systemInfo.reward) * BigInt(minerRate);
+                const xmrPart = preSplit * BigInt(ppsRatio) / 100n;
+                const mcPart = preSplit - xmrPart;
+
+                finalCredit = (mcPart * 9n) / ((BigInt(systemInfo.globalDiff) / 120n) * 1000000n);
                 if (ppsRatio > 0) {
-                    console.log(minerRate);
+                    const xmrCredit = (xmrPart * 97n) / ((BigInt(systemInfo.globalDiff) / 120n) * 10000000n);
+                    console.log(`Logging spread for split user ${miner.id}`);
+                    console.log(finalCredit);
+                    console.log(xmrCredit);
+                    let monero_balance = BigInt(miner.monero_balance);
+                    monero_balance += xmrCredit;
+                    MinerRepository.updateMiner(miner.id, { monero_balance });
                 }
         }
         return finalCredit;
