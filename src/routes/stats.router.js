@@ -72,7 +72,7 @@ router.post("/ppsratio", async (req, res) => {
     const { minerId, ppsRatio } = req.body;
     try {
         if (ppsRatio >= 0 && ppsRatio <= 100) {
-            const miner = await MinerRepository.updateMiner(minerId, { pps_ratio: ppsRatio});
+            //const miner = await MinerRepository.updateMiner(minerId, { pps_ratio: ppsRatio});
             return res.status(200).send({ ppsRatio });
         } else {
             throw 'Invalid pps ratio'
