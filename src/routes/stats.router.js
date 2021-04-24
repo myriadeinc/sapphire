@@ -32,7 +32,7 @@ router.get("/credit", async (req, res) => {
     const minerId = req.body.minerId;
     try {
         const minerInfo = await MinerRepository.getMinerDataById(minerId);
-        return res.status(200).send({ credits: minerInfo.credits });
+        return res.status(200).send({ credits: minerInfo.credits, monero_balance: minerInfo.monero_balance });
     }
     catch (e) {
         logger.error(e);
