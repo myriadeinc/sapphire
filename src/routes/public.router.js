@@ -27,9 +27,10 @@ router.get("/poolInfo",
             return res.status(200).send({
                 "hashrate": rate && rate.poolRate,
                 "miner_count": nminers,
-                "fee": "5%",
+                "fee": "0% 5%",
                 "block_height": currHeight.toString(),
-                "last_block_found": "NEVER"
+                "last_block_found": "NEVER",
+                "min_payout": 0.001
             });
         }
         catch (e) {
