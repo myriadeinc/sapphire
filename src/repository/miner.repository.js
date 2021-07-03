@@ -124,18 +124,6 @@ const MinerRepository = {
         difficulty: totalDiff || 0
       }]
     })
-    // return ShareModel.findAll({
-    //   attributes: ["minerId", "difficulty", "share", "blockHeight", "status"],
-    //   raw: true,
-    //   where: {
-    //     minerId,
-    //     blockHeight,
-    //     status: 0
-    //   },
-    // }).catch((err) => {
-    //   logger.error(err);
-    //   throw err;
-    // });
   },
 
   getRecentHashrates: (minerId, nBlocks) => {

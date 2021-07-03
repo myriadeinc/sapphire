@@ -5,13 +5,13 @@ const SystemHashrateModel = require('src/models/system.hashrate.model.js');
 const HashrateModel = require("src/models/hashrate.model.js");
 const MoneroApi = require("src/api/monero.api.js");
 const cache = require('src/util/cache.js');
+const StatsRepository = require("src/repository/stats.repository.js");
 
 const CreditService = require('src/service/credit.service.js');
 const mq = require('src/util/mq.js');
 
 const logger = require('src/util/logger.js').core;
 const DB = require('src/util/db.js');
-
 const MinerMetricsService = {
   currentHeight: {
     blockHeight: 0,
@@ -23,14 +23,18 @@ const MinerMetricsService = {
     const miners = await MinerRepository.getAllMiners();
     const time = Date.now();
     let poolHashrate = 0n;
+    let nminers = 0;
     const blockInfo = await MoneroApi.getBlockInfoByHeight(blockHeight.toString(), forceCalc)
 
     let minerStats = await Promise.all(miners.map(async (miner) => {
       const minerShares = await MinerRepository.getBlockShares(miner.id, blockHeight);
-      if (minerShares.length == 0) return { id: miner.id, rate: 0n }
+      if (minerShares == null) return { id: miner.id, rate: 0n }
+     
       const minerHashrate = minerShares.reduce((base, share) => {
         return base + (BigInt(share.share) * BigInt(share.difficulty));
       }, 0n) / 120n;
+      // count active miners
+      if(minerHashrate > 0n) { nminers++ }
       poolHashrate += minerHashrate;
       return { id: miner.id, rate: minerHashrate }
     })
@@ -38,7 +42,7 @@ const MinerMetricsService = {
     minerStats.filter(miner => miner.rate != 0)
 
 
-    logger.info(`Pool Hashrate for block ${blockHeight} at ${poolHashrate}`)
+    logger.info(`Pool Hashrate for block ${blockHeight} at ${poolHashrate} with ${nminers} miners`)
     // Need to wrap all of it inside a DB transaction so that if one fails, all fails and DB
     //  performs a rollback to initial state. This provides strong guarantuee.
     try {
@@ -81,25 +85,31 @@ const MinerMetricsService = {
     catch (e) {
       logger.error("Could not update all shares into hashrates")
       logger.error(e)
-      return false;
+      return null;
     }
-    return true;
+    return {
+      poolHashrate: poolHashrate.toString()
+  , nminers, 
+  blockHeight: blockHeight.toString()};
   },
   calculateForBlock: async (blockHeight) => {
     try {
       // Because BigInt isn't fully supported everywhere
       blockHeight = blockHeight.toString()
       logger.info(`New BlockHeight detected, processing hashrate for last known blockHeight ${blockHeight}`)
-      const success = await MinerMetricsService.convertSharesToHashrate(blockHeight);
+      let poolData = await MinerMetricsService.convertSharesToHashrate(blockHeight);
 
       // Once we successfully convert shares to hashrate and get block info
-      if (!success) {
+      if (poolData == null) {
         logger.error("Convert shares to hashrate not successful")
         return false;
       }
       // Update credit balance for each miner
       logger.info(`Converting hashrates to credits for blockHeight ${blockHeight}`)
       await CreditService.hashrateToCredits(blockHeight);
+      
+      await StatsRepository.savePoolStats(poolData);
+      
       MinerMetricsService.currentHeight.blockHeight = (BigInt(blockHeight) + 1n).toString();
 
     }

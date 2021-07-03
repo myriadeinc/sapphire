@@ -8,7 +8,7 @@
   "scripts": {
     "start:dev": "nodemon --inspect=0.0.0.0:9870 -L --ignore test src/main.js",
     "start": "node src/main.js",
-    "test": "mocha --color --recursive 'test'",
+    "test": "mocha --color --timeout 10000 --exit --recursive 'test'",
     "lint": "eslint --fix src",
     "migration:up": "node scripts/migration.up.js",
     "migration:generate": "node scripts/generate.migration.js"

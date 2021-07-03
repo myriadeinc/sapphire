@@ -4,7 +4,12 @@ const router = require("express").Router();
 /* eslint-enable */
 const MinerMetricsService = require("src/service/miner.metrics.service.js");
 const SystemHashrateModel = require("src/models/system.hashrate.model.js");
+const StatsRepository = require("src/repository/stats.repository.js");
+
 const HashrateModel = require("src/models/hashrate.model.js");
+const cache = require('src/util/cache.js');
+const CURR_POOL_INFO = 'currPoolInfo'
+
 const Sequelize = require('sequelize');
 
 const logger = require("src/util/logger.js").db;
@@ -12,23 +17,17 @@ const logger = require("src/util/logger.js").db;
 router.get("/poolInfo",
     async (req, res) => {
         try {
-            const currHeight = BigInt(MinerMetricsService.currentHeight.blockHeight) - 1n;
-            const rate = await SystemHashrateModel.findByPk(currHeight.toString());
-            const nminers = await HashrateModel.count({
-                distinct: true,
-                col: "minerId",
-                where: {
-                    blockHeight: currHeight.toString(),
-                    rate: {
-                        [Sequelize.Op.not]: 0
-                    }
-                }
-            });
+            let currHeight = BigInt(MinerMetricsService.currentHeight.blockHeight) - 1n;
+            currHeight = currHeight.toString()
+            const poolData = await StatsRepository.getPoolStats(currHeight)
+            let rate = Number(poolData.poolRateSum) / Number(poolData.hits)
+            rate = Math.floor(rate)
+            const nminers = poolData.nminers
             return res.status(200).send({
-                "hashrate": rate && rate.poolRate,
+                "hashrate": rate || 0,
                 "miner_count": nminers,
                 "fee": "0% 5%",
-                "block_height": currHeight.toString(),
+                "block_height": currHeight,
                 "last_block_found": "NEVER",
                 "min_payout": 0.001
             });

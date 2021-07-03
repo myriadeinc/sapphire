@@ -46,9 +46,9 @@ const CreditService = {
                 finalCredit = (mcPart * 9n) / ((BigInt(systemInfo.globalDiff) / 120n) * 1000000n);
                 if (ppsRatio > 0) {
                     const xmrCredit = (xmrPart * 97n) / ((BigInt(systemInfo.globalDiff) / 120n) * 100n);
-                    console.log(`Logging spread for split user ${miner.id}`);
-                    console.log(finalCredit);
-                    console.log(xmrCredit);
+                    // console.log(`Logging spread for split user ${miner.id}`);
+                    // console.log(finalCredit);
+                    // console.log(xmrCredit);
                     let monero_balance = BigInt(miner.monero_balance);
                     monero_balance += xmrCredit;
                     MinerRepository.updateMiner(miner.id, { monero_balance });

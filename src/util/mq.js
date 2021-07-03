@@ -37,34 +37,15 @@ const MQ = {
       });
   },
 
-  // Don't need to send data for Sapphire
-  // send: (msg) => {
-  //   return channel.assertQueue(queue)
-  //       .then((ok) => {
-  //         logger.info(`Sending: ${msg}\n on queue ${queue}`);
-  //         return channel.sendToQueue(queue, toBuffer(msg));
-  //       })
-  //       .then(() => {
-  //         return 0;
-  //       })
-  //       .catch((err) => {
-  //         logger.error(err);
-  //         logger.error(`Error occured while sending: \n ${msg}`);
-  //         return -1;
-  //       });
-  // },
-
   registerConsumer: (cb) => {
     return channel.assertQueue(queue)
       .then((ok) => {
         return channel.consume(queue, (msg) => {
           if (null !== msg) {
             channel.ack(msg);
-            
-        if (config.get("rabbitmq:debug")) {
-         
-          logger.info(`Consuming message: ${msg.content.toString()}\n from queue ${queue}`);
-        }return cb(JSON.parse(msg.content.toString()));
+
+          logger.debug(`Consuming message: ${msg.content.toString()}\n from queue ${queue}`);
+        return cb(JSON.parse(msg.content.toString()));
           }
         });
       })
