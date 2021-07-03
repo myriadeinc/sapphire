@@ -1,7 +1,7 @@
 'use strict';
 const bunyan = require('bunyan')
   , bformat = require('bunyan-formatter')
-  , formatOut = bformat({ outputMode: 'short', level: 'debug' });
+  , formatOut = bformat({ outputMode: 'short', level: 'info' });
 const gelfStream = require('gelf-stream')
 const config = require('src/util/config.js');
 
