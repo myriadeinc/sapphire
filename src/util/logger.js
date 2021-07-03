@@ -10,10 +10,10 @@ const gelfPort = config.get('fluentd_port') || 9999;
 
 let streams = [];
 streams.push({ stream: formatOut });
-// streams.push({
-//   stream: gelfStream.forBunyan(gelfHost, gelfPort),
-//   type: 'raw'
-// })
+streams.push({
+  stream: gelfStream.forBunyan(gelfHost, gelfPort),
+  type: 'raw'
+})
 
 const logger = bunyan.createLogger({
   name: 'sapphire',
