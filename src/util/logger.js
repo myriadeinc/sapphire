@@ -5,15 +5,18 @@ const bunyan = require('bunyan')
 const gelfStream = require('gelf-stream')
 const config = require('src/util/config.js');
 
-const gelfHost = config.get('fluentd_host') || 'localhost';
-const gelfPort = config.get('fluentd_port') || 9999;
+const gelfHost = config.get('fluentd_host');
+const gelfPort = config.get('fluentd_port');
 
 let streams = [];
 streams.push({ stream: formatOut });
-streams.push({
-  stream: gelfStream.forBunyan(gelfHost, gelfPort),
-  type: 'raw'
-})
+if(gelfHost){
+  streams.push({
+    stream: gelfStream.forBunyan(gelfHost, gelfPort),
+    type: 'raw'
+  })
+}
+
 
 const logger = bunyan.createLogger({
   name: 'sapphire',
