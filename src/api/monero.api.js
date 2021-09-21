@@ -5,6 +5,8 @@ const axios = require("axios");
 const moneroUrl = config.get("monero:daemon:host") || "daemon.myriade.io"
 const   DEFAULT_REWARD = "1627091224764";
 const  DEFAULT_DIFF = "161650163162";
+
+const BACKUP_NODE = 'http://node.melo.tools:18081/json_rpc';
 const send_rpc = (method, data) => {
   return axios({
     url: `http://${moneroUrl}/json_rpc`,
@@ -18,10 +20,32 @@ const send_rpc = (method, data) => {
   }).then(({ data }) => {
     return data.result;
   }).catch(e => {
+    logger.error(e)
+    logger.error("XMR Daemon error") 
+    return send_rpc_retry(method, data)
+  });
+};
+
+const send_rpc_retry = (method, data) => {
+  return axios({
+    url: BACKUP_NODE,
+    method: "POST",
+    data: {
+      json_rpc: "2.0",
+      id: "0",
+      method,
+      params: data,
+    },
+  }).then(({ data }) => {
+    return data.result;
+  }).catch(e => {
+    logger.error("Backup Daemon error") 
+
     logger.error(e) 
     return false
   });
 };
+
 let blockHeight = 1;
 const MoneroApi = {
 
