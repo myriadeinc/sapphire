@@ -10,7 +10,7 @@ const NAMESPACE_POOL_DATA= 'poolData'
 const StatsRepository = {
 
   savePoolStats: async (poolData) => {
-    logger.info(`Attempting to sve poolData ${JSON.stringify(poolData)}`)
+    logger.info(`Pool Stats for height ${poolData.blockHeight}: ${poolData.poolHashrate} H/s ${poolData.nminers} miners `)
     let blockHeight = poolData.blockHeight.toString()
     await cache.put(blockHeight, poolData, NAMESPACE_POOL_DATA)
     // A little over a day 

@@ -42,7 +42,6 @@ const MinerMetricsService = {
     minerStats.filter(miner => miner.rate != 0)
 
 
-    logger.info(`Pool Hashrate for block ${blockHeight} at ${poolHashrate} with ${nminers} miners`)
     // Need to wrap all of it inside a DB transaction so that if one fails, all fails and DB
     //  performs a rollback to initial state. This provides strong guarantuee.
     try {
@@ -50,7 +49,7 @@ const MinerMetricsService = {
         // This is not the most accurate method of collecting pool hashrate, but we can always refresh via calling
         const reward = blockInfo.reward;
         const globalDiff = blockInfo.difficulty;
-        logger.info(`Block info: reward is ${reward} \t diff is ${globalDiff}`);
+        logger.info(`Block ${blockHeight} info: reward is ${reward} \t diff is ${globalDiff}`);
 
         await Promise.all(minerStats.map(miner =>
           HashrateModel.upsert(
@@ -96,7 +95,7 @@ const MinerMetricsService = {
     try {
       // Because BigInt isn't fully supported everywhere
       blockHeight = blockHeight.toString()
-      logger.info(`New BlockHeight detected, processing hashrate for last known blockHeight ${blockHeight}`)
+      logger.debug(`New BlockHeight detected, processing hashrate for last known blockHeight ${blockHeight}`)
       let poolData = await MinerMetricsService.convertSharesToHashrate(blockHeight);
 
       // Once we successfully convert shares to hashrate and get block info
@@ -105,7 +104,6 @@ const MinerMetricsService = {
         return false;
       }
       // Update credit balance for each miner
-      logger.info(`Converting hashrates to credits for blockHeight ${blockHeight}`)
       await CreditService.hashrateToCredits(blockHeight);
       
       await StatsRepository.savePoolStats(poolData);
@@ -117,6 +115,8 @@ const MinerMetricsService = {
       logger.error(e)
       return false
     }
+    logger.debug(`Converted hashrates to credits for blockHeight ${blockHeight}`)
+
     return true;
 
   },
