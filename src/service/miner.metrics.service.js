@@ -133,6 +133,18 @@ const MinerMetricsService = {
         data.blockHeight,
         new Date(data.timestamp),
       );
+      try {
+        if (BigInt(data.blockHeight) > BigInt(MinerMetricsService.currentHeight.blockHeight)){
+          MinerMetricsService.calculateForBlock(BigInt(MinerMetricsService.currentHeight.blockHeight))
+        }
+
+
+      } catch (e){
+        logger.error(e)
+        logger.error("tried to calculate new blockheight but failed")
+
+      }
+      
 
     } catch (err) {
       logger.error(err);

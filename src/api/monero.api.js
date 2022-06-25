@@ -2,49 +2,46 @@
 const config = require("src/util/config.js");
 const logger = require("src/util/logger.js").xmr;
 const axios = require("axios");
-const moneroUrl = config.get("monero:daemon:host") || "daemon.myriade.io"
-const   DEFAULT_REWARD = "1627091224764";
+// const moneroUrl = config.get("monero:daemon:host") || "daemon.myriade.io"
+const  DEFAULT_REWARD = "1627091224764";
 const  DEFAULT_DIFF = "161650163162";
 
-const BACKUP_NODE = 'http://node.melo.tools:18081/json_rpc';
-const send_rpc = (method, data) => {
-  return axios({
-    url: `http://${moneroUrl}/json_rpc`,
-    method: "POST",
-    data: {
-      json_rpc: "2.0",
-      id: "0",
-      method,
-      params: data,
-    },
-  }).then(({ data }) => {
-    return data.result;
-  }).catch(e => {
-    logger.error(e)
-    logger.error("XMR Daemon error") 
-    return send_rpc_retry(method, data)
-  });
+const hosts = [
+  'https://node.monerod.org/json_rpc',
+  'http://node.melo.tools:18081/json_rpc',
+  'http://xmr-node.cakewallet.com:18081',
+  'http://node.monero.net:18081/json_rpc',
+  'http://xmr.support:18081/json_rpc',
+  'http://xmr-lux.boldsuck.org:38081/json_rpc'
+]
+
+
+const send_rpc =  async (method, parameters) => {
+  for (let host of hosts) {
+    try {
+      logger.info(`Contacting monero rpc host ${host}`)
+      const result = await axios.post(host, {
+          "json_rpc": "2.0",
+          "id": "1",
+          "method": method,
+          "params": parameters
+        }
+      )
+      if (result) {
+        return result.data
+      }
+      logger.error("Did not receive response")
+      continue
+    }catch(e){
+      logger.error(e)
+      continue
+    }
+  }
+  throw new Error("Couldn't contact XMR Daemon") 
+
+
 };
 
-const send_rpc_retry = (method, data) => {
-  return axios({
-    url: BACKUP_NODE,
-    method: "POST",
-    data: {
-      json_rpc: "2.0",
-      id: "0",
-      method,
-      params: data,
-    },
-  }).then(({ data }) => {
-    return data.result;
-  }).catch(e => {
-    logger.error("Backup Daemon error") 
-
-    logger.error(e) 
-    return false
-  });
-};
 
 let blockHeight = 1;
 const MoneroApi = {
@@ -54,43 +51,66 @@ const MoneroApi = {
   },
   getCurrentBlockHeight: () => {
     return blockHeight;
-    // return send_rpc("get_height", {}).height;
   },
   updateBlockheight: (height) => {
     blockHeight = height;
     return height;
   },
 
-  getBlockReward: (blockHeight) => {
-    return send_rpc("get_block_header_by_height", { blockHeight }).then(
-      (result) => {
-        return result.block_header.reward;
+  getBlockReward: async (blockHeight) => {
+    try {
+      const data = await send_rpc("get_block_header_by_height", { blockHeight })
+      if (data.result) {
+        return data.result.block_header.reward
       }
-    );
+    } catch(e){
+      logger.error(e)
+    }
   },
-  getBlockInfoByHeight: (blockHeight, forceCalc = false) => {
+  getBlockInfoByHeight: async (blockHeight, forceCalc = false) => {
     if(forceCalc) return MoneroApi.DEFAULT_BLOCK
-    return send_rpc("get_block", { height: blockHeight })
-    .then(result => {
-        if (!result || result == undefined) throw new Error('No response!')
-        return result.block_header;
-    })
-    .catch(e => {
-      logger.error("Unable to fetch monero info!")
+
+    try {
+      const data = await send_rpc("get_block", { height: blockHeight })
+      if (data.result) {
+        return data.result.block_header
+      }
+    } catch(e){
       logger.error(e)
       return MoneroApi.DEFAULT_BLOCK
-    })
+    }
+
+
   },
-  getInfo: () => {
-    return send_rpc("get_info", {})
+  getInfo: async () => {
+
+    try {
+      const data = await send_rpc("get_info", {})
+      if (data.result) {
+        return data.result
+      }
+    } catch(e){
+      logger.error(e)
+      return 
+    }
+
   },
 
   /**
    * @description gets the header of the last block : promisified
    * @return {object} Returns the header of the last block promisified
    */
-  getLastBlockHeader: () => {
-    return send_rpc("getlastblockheader", {});
+  getLastBlockHeader: async () => {
+
+    try {
+      const data = await send_rpc("getlastblockheader", {})
+      if (data.result) {
+        return data.result
+      }
+    } catch(e){
+      logger.error(e)
+      return 
+    }
   },
 };
 
