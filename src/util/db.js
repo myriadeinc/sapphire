@@ -29,6 +29,10 @@ const getOptions = (opt, log) => {
     migrations: {
       model_name: 'Migration',
     },
+    dialectOptions: {
+      statement_timeout: 100000,
+      idle_in_transaction_session_timeout: 50000
+    }
   });
 
   Options.define.schema = Options.schema;

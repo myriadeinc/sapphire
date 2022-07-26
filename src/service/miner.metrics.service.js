@@ -113,6 +113,7 @@ const MinerMetricsService = {
     }
     catch (e) {
       logger.error(e)
+      logger.error(`could not process hashrate for ${blockHeight}`)
       return false
     }
     logger.debug(`Converted hashrates to credits for blockHeight ${blockHeight}`)
@@ -136,6 +137,7 @@ const MinerMetricsService = {
       try {
         if (BigInt(data.blockHeight) > BigInt(MinerMetricsService.currentHeight.blockHeight)){
           MinerMetricsService.calculateForBlock(BigInt(MinerMetricsService.currentHeight.blockHeight))
+          MinerMetricsService.currentHeight.blockHeight = BigInt(data.blockHeight)
         }
 
 
