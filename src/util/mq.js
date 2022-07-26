@@ -12,19 +12,17 @@ function delay(time) {
 
 let channel;
 
-const toBuffer = (obj) => {
-  let str = obj;
-  if ('string' !== typeof myVar) {
-    str = JSON.stringify(obj);
-  }
-  const buff = Buffer.from(str, 'utf8');
-  return buff;
-};
+// const toBuffer = (obj) => {
+//   let str = obj;
+//   if ('string' !== typeof myVar) {
+//     str = JSON.stringify(obj);
+//   }
+//   const buff = Buffer.from(str, 'utf8');
+//   return buff;
+// };
 
 const MQ = {
-  getChannel: () => {
-    return channel;
-  },
+
 
   init: async (url, timeout = 1) => {
 
@@ -40,35 +38,24 @@ const MQ = {
       logger.error(e);
       await MQ.init(url, timeout * 2)
     }
-    // return amq.connect(url)
-    //   .then((conn) => {
-    //     return conn.createChannel();
-    //   })
-    //   .then((ch) => {
-    //     channel = ch;
-    //     logger.info("Messaging queue initialized!")
-    //     return true;
-    //   })
-    //   .catch(err => {
-    //     logger.error(err);
-    //   });
   },
 
   registerConsumer: async (cb) => {
-    return channel.assertQueue(queue)
-      .then((ok) => {
-        return channel.consume(queue, (msg) => {
-          if (null !== msg) {
-            channel.ack(msg);
-
-          logger.debug(`Consuming message: ${msg.content.toString()}\n from queue ${queue}`);
+    try {
+      const queueExists = channel.assertQueue(queue)
+      return channel.consume(queue, (msg) => {
+        if (null !== msg) {
+        channel.ack(msg);
+        logger.debug(`Consuming message: ${msg.content.toString()}\n from queue ${queue}`);
         return cb(JSON.parse(msg.content.toString()));
-          }
-        });
+        }
       })
-      .catch((err) => {
+    } catch(e){
         logger.error(err);
-      });
+
+    }
+
+
   },
 
 };
