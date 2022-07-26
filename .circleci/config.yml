@@ -73,12 +73,22 @@ workflows:
           requires:
             - test
           image: $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
-          tag: 'latest,$CIRCLE_SHA1,$CIRCLE_TAG'
+          tag: 'latest,$CIRCLE_SHA1'
           filters:
             branches:
               only:
                 - main
                 - master
                 - develop
+
+      - docker/publish:
+          requires:
+            - test
+          image: $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
+          tag: '$CIRCLE_TAG'
+          filters:
+            tags:
+              only: /^v.*/
+            
 
       
