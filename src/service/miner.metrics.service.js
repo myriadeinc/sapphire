@@ -87,9 +87,11 @@ const MinerMetricsService = {
       return null;
     }
     return {
-      poolHashrate: poolHashrate.toString()
-  , nminers, 
-  blockHeight: blockHeight.toString()};
+      poolHashrate: poolHashrate.toString(),
+      nminers, 
+      blockHeight: blockHeight.toString(),
+      minerStats
+    }
   },
   calculateForBlock: async (blockHeight) => {
     try {
@@ -104,7 +106,7 @@ const MinerMetricsService = {
         return false;
       }
       // Update credit balance for each miner
-      await CreditService.hashrateToCredits(blockHeight);
+      await CreditService.hashrateToCredits(blockHeight, poolData.minerStats);
       
       await StatsRepository.savePoolStats(poolData);
       

@@ -3,24 +3,23 @@ const axios = require('axios');
 
 const MinerRepository = require('src/repository/miner.repository.js');
 const SystemHashrateModel = require('src/models/system.hashrate.model.js');
-const MinerModel = require("src/models/miner.model.js");
 const MoneroApi = require("src/api/monero.api.js");
 const logger = require('src/util/logger.js').core;
 const DB = require("src/util/db.js");
 
 
 const CreditService = {
-    hashrateToCredits: async (blockHeight) => {
+    hashrateToCredits: async (blockHeight, minerStats) => {
         const systemInfo = await SystemHashrateModel.findByPk(blockHeight.toString(), { raw: true });
-        const miners = await MinerRepository.getAllMinerHashrates(blockHeight);
         // Calculate miner credit based on formula, then update credit, wrap in transaction to ensure all miners receive their credits
         await DB.sequelize.transaction(async (t) => {
-            await Promise.all(miners.map(async miner => {
-                const minerModel = await MinerRepository.getMiner(miner.minerId);
-                const credits = CreditService.creditConverter(miner.rate, systemInfo, "useMyriade", minerModel).toString();
-                return MinerRepository.grantMinerCredits(miner.minerId, credits, t)
+            await Promise.all(minerStats.map(async minerStat => {
+                const minerModel = await MinerRepository.getMiner(minerStat.id);
+                const credits = CreditService.creditConverter(minerStat.rate, systemInfo, "useMyriade", minerModel).toString();
+                return MinerRepository.grantMinerCredits(minerStat.id, credits, t)
             }))
         })
+        logger.info("successful hashrate to credits")
         return true;
     },
 

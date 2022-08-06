@@ -8,7 +8,6 @@ const Op = require("src/util/db.js").Sequelize.Op;
 const logger = require("src/util/logger.js").minerRepository;
 const cache = require('src/util/cache.js');
 
-
 const MinerRepository = {
   getAllMiners: (onlyIds = false) => {
     if (onlyIds) {

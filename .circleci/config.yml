@@ -71,7 +71,7 @@ workflows:
           requires:
             - test
           image: $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
-          tag: 'latest,$CIRCLE_SHA1,$CIRCLE_BUILD_NUM'
+          tag: 'latest,$CIRCLE_BUILD_NUM'
           filters:
             branches:
               only:
