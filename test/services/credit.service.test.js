@@ -57,7 +57,7 @@ describe("Credit Event Service Unit Tests", () => {
             globalDiff: '154737604954',
             reward: '1613816433342'
         })
-        const minerStats = miners.map(miner => { return {id: miner.id, rate: 8} })
+        const minerStats = miners.map(miner => { return {id: miner.id, rate: '123456789'} })
 
         await CreditService.hashrateToCredits(refHeight, minerStats);
         miners = await MinerModel.findAll({ raw: true })
