@@ -4,8 +4,7 @@ const axios = require("axios");
 const MinerRepository = require("src/repository/miner.repository.js");
 
 const MinerModel = require("src/models/miner.model.js");
-const HashRateModel = require("src/models/hashrate.model.js");
-const ShareModel = require("src/models/share.model.js");
+
 const CreditEventModel = require("src/models/credit.event.model.js");
 const EventModel = require("src/models/event.cms.model.js");
 const Op = require('sequelize').Op;

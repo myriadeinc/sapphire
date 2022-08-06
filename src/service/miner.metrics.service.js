@@ -108,6 +108,8 @@ const MinerMetricsService = {
       // Update credit balance for each miner
       await CreditService.hashrateToCredits(blockHeight, poolData.minerStats);
       
+      // Do not need miner data anymore
+      delete poolData.minerStats
       await StatsRepository.savePoolStats(poolData);
       
       MinerMetricsService.currentHeight.blockHeight = (BigInt(blockHeight) + 1n).toString();
